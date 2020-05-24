@@ -5,12 +5,18 @@ import random
 from enum import Enum
 
 class DOOR:
+    """
+    Establishes three doors in a room. One leads to the murderer, two don't! 
+    Doors can be locked when the lockpicking craft is discovered.
+    Players can also set traps on doors to help shelter them. 
+    """
     def __init__(self):
         self.murderous = False
         self.locked = False
         self.trap = None
 
 class room:
+    """Builds a random room with furnishings and special gameplay items"""
     def __init__(self):
         self.containers = {
             # container:[item,...]
@@ -53,6 +59,7 @@ class room:
         if random.choice([True]*1+[False]*9): self.altar = ALTAR()
 
     def test_fit(self):
+        """sample code for making sure things fit in places"""
         b = BOOK()
         print("-------made a book-------")
         print("size: {0}\ndblt: {1}\nrare: {2}\ngood: {3}".format(

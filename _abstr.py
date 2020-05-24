@@ -29,6 +29,7 @@ class _abstr (ABC):
         self.alignment = 0.0 ## any curse or bless effects normalized -1 to 1
 
 class size(Enum):
+    """Enumeration of all item sizes (except lamps)"""
     TINY = 0        ## weight 0
     SMALL = 1       ## weight 1
     MEDUIM = 2      ## etc
@@ -36,13 +37,14 @@ class size(Enum):
     HUGE = 4
 
 class lamp_size(Enum): 
-    """affects how long a book takes to read"""
+    """Enumeration of Lamp types. Affects book reading time. """
     CANDLE = 0      ## 5
     SCONCE = 1      ## 3
     DESKLAMP = 2    ## 1
     FLOORLAMP = 3   ## 1
 
 class rarity(Enum):
+    """Enumeratio of item rarities"""
     COMMON = 0       ## 25
     UNUSUAL = 1      ## 15
     STRANGE = 2      ## 5
@@ -51,6 +53,7 @@ class rarity(Enum):
     MYTHOLOGICAL = 5 ## 1
 
 class durability(Enum):
+    """Enumeratio of item durabilities"""
     FRAGILE = 0     ## 5
     RAMSHACKLE = 1  ## 10
     ADEQUATE = 2    ## 70
@@ -59,6 +62,7 @@ class durability(Enum):
     YOKED = 5       ## 1
     
 class room_type(Enum):
+    """Enumeration of all room types"""
     BEDROOM = 0
     SITTINGROOM = 1
     KITCHEN = 2
@@ -67,6 +71,7 @@ class room_type(Enum):
     LIBRARY = 5
 
 class container(Enum):  # contains up to:
+    """Enumeration of all room container types"""
     CABINET = 0         # MEDIUM
     DRESSER = 1         # SMALL
     CHEST = 2           # MEDIUM
@@ -84,6 +89,7 @@ class container(Enum):  # contains up to:
     PANTRY = 16         # HUGE
     CHIMNEY = 17        # HUGE Elisabeth
     def MAX_SIZE(self):
+        """Returns a list of item sizes compatible with a room container"""
         return {
             self.CABINET:   [size.TINY, size.SMALL, size.MEDUIM],
             self.DRESSER:   [size.TINY, size.SMALL],
@@ -104,10 +110,12 @@ class container(Enum):  # contains up to:
         }
 
 class available(Enum):
+    """The presence of an item or the ability to craft an item"""
     AVAILABLE = 0
     UNAVAILABLE = 1 
 
 class ingredient_name(Enum):
+    """Ingredients are the primary mechanism in crafting. Crafting trees can be found in craf_engine.py"""
     ## predominantly spells
     CATWHISKER = 0      # 
     MUGWORT = 1         # 
@@ -180,7 +188,7 @@ class ingredient_name(Enum):
     COFFEE = 206        # 1
 
 class SPELLS(Enum):
-    ## Spells have consumption time
+    """Spells have consumption time"""
     WISHFORHELP = 0
     HOUSESALAD = 1
     HEALINGMAX = 2
@@ -190,19 +198,19 @@ class SPELLS(Enum):
     FIGHT = 6
 
 class TRAPS(Enum):
-    ## Traps have setup time
+    """Traps have setup time"""
     FRONTTOWARDSENEMY = 0
     HOMEALONE = 1
     SNAILPROBLEM = 2
     BANGBANGBANG = 3
 
 class WEAPONS(Enum):
-    ## Weapons have a maximum number of uses
+    """Weapons have a maximum number of uses"""
     DADDYSLITTLEMONSTER = 0
     THEGREY = 1
 
 class TOOLS(Enum):
-    ## Tools have a maximum number of uses, and increase relevant character attribute until used up
+    """Tools have a maximum number of uses, and increase relevant character attribute until used up"""
     RAVEON = 0
     MOLLYPOP = 1
     LIGHTBRINGER = 2
@@ -210,9 +218,11 @@ class TOOLS(Enum):
     BOSNIANTOOL = 4
 
 class compute:
+    """Class defines how items and attributes are randomized in game. Also creates scores and computes affect."""
     def __init__(self):
         pass
     def RANDOMIZE_DURABILITY(self):
+        """Randomizes an item's durability - can be used to affect number of uses or effectiveness in battle"""
         return random.choice(
             [durability.FRAGILE]*5+\
             [durability.RAMSHACKLE]*10+\
@@ -221,6 +231,7 @@ class compute:
             [durability.CHUNKY]*5+\
             [durability.YOKED]*1)
     def RANDOMIZE_RARITY(self):
+        """Randomizes an item's rarity - can be used to affect the quality of crafts"""
         return random.choice(
             [rarity.COMMON]*25+\
             [rarity.UNUSUAL]*15+\
@@ -229,18 +240,21 @@ class compute:
             [rarity.IMMACULATE]*2+\
             [rarity.MYTHOLOGICAL]*1)
     def RANDOMIZE_SIZE_BOOK(self):
+        """Randomizes a book's size. Bigger books take longer to read, but have better benefits to int and craft"""
         return random.choice(
             [size.TINY]*1+\
             [size.SMALL]*5+\
             [size.MEDUIM]*3+\
             [size.LARGE]*1)
     def RANDOMIZE_SIZE_LAMP(self):
+        """Randomizes the type of lamp in a room. Books must be read in a room with a light. Light brightness affects book reading time."""
         return random.choice(
             [lamp_size.CANDLE]*5+\
             [lamp_size.SCONCE]*3+\
             [lamp_size.DESKLAMP]*1+\
             [lamp_size.FLOORLAMP]*1)
     def RANDOMIZE_ROOM_TYPE(self):
+        """Randomizes the style of room. Some rooms have more loot and more slots for people to show up!"""
         return random.choice(
             [room_type.BEDROOM]*50+\
             [room_type.SITTINGROOM]*20+\
@@ -250,17 +264,20 @@ class compute:
             [room_type.LIBRARY]*5+\
             [room_type.CHIMNEY]*5)
     def RANDOMIZE_INGREDIENT_NAME(self):
+        """Randomizes the ingredients that appear in room containers."""
         return random.choice([e for e in ingredient_name])
     def ALIGNMENT(self):
-        # returns an alignment normalized from -1 to 1
+        """Randomizes the alignment of an item. Vaues come from points on a normal distribution centered on 0 between -1 and 1"""
         a = random.uniform(0, 1.0)
         b = random.uniform(0, 1.0)
         x = sqrt(-2*log(a))*(cos(2*pi*b))
         y = (sqrt(-2*log(a))*(sin(2*pi*b)))
         return random.choice([x/4, y/4])
     def RANDOMIZE_SIZE_INGREDIENT(self):
+        """Returns the size an ingredient is allowed to be. Currently only returns size.TINY"""
         return size.TINY
     def RANDOMIZE_SIZE_ALTAR(self):
+        """Returns the size an altar is allowed to be. Currently only returns size.SMALL"""
         return size.SMALL
         
 
