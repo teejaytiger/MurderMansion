@@ -2,6 +2,9 @@
 
 Murder mansion is a text-based RPG I'm developing with a 1 month deadline for my wife's birthday. It has elements of magic, horror, and fear. 
 
+## I need your help!
+Anyone who helps me come up with ideas for characters Alice can encounter, new ideas for spells, and craftable items she can use will end up in the credits! It'll be well worth it for her to experience your influence in this game!
+
 ## Gameplay: The Most Dangerous Game
 You wake up in a house with a murderer after you, moving from room to room avoiding confrontation as much as possible, while building up your magical abilities by performing spells, crafting weapons, traps, and tools, and by reading books to know your enemy. 
 
@@ -18,7 +21,7 @@ Keep moving! If you stay in any one place too long, the murderer could find his 
 Leave the mansion at all costs! Become a badass in the process! Live life on the edge of your seat as you attempt to escape Murder Mansion. 
 
 ## Crafting
-The crafting system uses a set of ingredients, scattered all over the mansion in appropriate distributions to simulate rarity. The spells and crafts are collaborative and come from ideas made by family and friends! The list of ingredients is shown below:
+The crafting system uses a set of ingredients, scattered all over the mansion in appropriate distributions to simulate rarity. The spells and crafts are collaborative and come from ideas made by family and friends! An incomplete list of ingredients is shown below:
 
     CATWHISKER      MUGWORT         DEADFLESH       
     MURDERWEAPON    QUARTZ          DRYROT           
@@ -39,7 +42,11 @@ The crafting system uses a set of ingredients, scattered all over the mansion in
     BATTERY         CIRCUIT         ICEBERGLETTUCE  
     TOMATO          CROUTONS        OLIVEOIL    
 
-Crafts are defined in `craft_engine.py` and uses the enumerated ingredients listed in `_abstr` to create requirements for spells, traps, weapons, and tools. 
+> Crafts are defined in `craft_engine.py` and uses the enumerated ingredients listed in `_abstr` to create requirements for spells, traps, weapons, and tools.  
+
+> Check out [this link](https://github.com/teejaytiger/MurderMansion/blob/master/craft_engine.py) to see some examples of crafts and spells I've already put in the game!  
+
+> You can also see an updated ingredients list in [this file](https://github.com/teejaytiger/MurderMansion/blob/master/_abstr.py) starting at line #120
 
 Here is an example spell:  
 
