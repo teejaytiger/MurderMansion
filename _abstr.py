@@ -82,6 +82,7 @@ class container(Enum):  # contains up to:
     UNDERBED = 14       # HUGE
     CHESTERFIELD = 15   # SMALL
     PANTRY = 16         # HUGE
+    CHIMNEY = 17        # HUGE Elisabeth
     def MAX_SIZE(self):
         return {
             self.CABINET:   [size.TINY, size.SMALL, size.MEDUIM],
@@ -96,7 +97,8 @@ class container(Enum):  # contains up to:
             self.BOOKCASE:  [size.TINY, size.SMALL, size.MEDUIM],
             self.DISPLAYCASE:[size.TINY,size.SMALL, size.MEDUIM, size.LARGE],
             self.BED:       [size.MEDUIM, size.LARGE, size.HUGE],
-            self.DESK:      [size.TINY, size.SMALL, size.MEDUIM, size.LARGE, size.HUGE],
+            self.DESK:      [size.TINY, size.SMALL, size.HUGE],
+            self.CHIMNEY:   [size.SMALL, size.MEDUIM, size.LARGE, size.HUGE],
             self.UNDERBED:  [size.MEDUIM, size.LARGE, size.HUGE],
             self.CHESTERFIELD:[size.TINY, size.SMALL]
         }
@@ -134,6 +136,11 @@ class ingredient_name(Enum):
     WHITETEALIGHT = 24  # 
     SALT = 25           # 
     VINEGAR = 26        #
+    REISHIMUSHROOM = 27 # Elisabeth
+    NIGHTSHADE = 28     # Elisabeth
+    OLEANDER = 29       # Elisabeth
+    ASH = 30            # Elisabeth
+    BOTTLE = 31         # common item
     ## predominantly crafts
     MATCHSTICK = 51     # 
     PIPE = 52           # 
@@ -160,9 +167,47 @@ class ingredient_name(Enum):
     CIRCUIT = 73        # 
     ## Haley's salad
     ICEBERGLETTUCE = 100# 
-    TOMATO = 101        #
+    TOMATO = 101        # 
     CROUTONS = 102      # 
     OLIVEOIL = 103      # 
+    ## family stuff
+    DERMESTIDBEETLES=200# 1
+    WERTHERSCANDY = 201 # 1
+    HONEYMUSTARD = 202  # 1
+    VOLLEYBALL = 203    # 1
+    AVETTBROTHERSCD=204 # 1
+    VPDHAT = 205        # 1
+    COFFEE = 206        # 1
+
+class SPELLS(Enum):
+    ## Spells have consumption time
+    WISHFORHELP = 0
+    HOUSESALAD = 1
+    HEALINGMAX = 2
+    HEALINGMINOR = 3
+    HEALINGMIDDLE = 4
+    FLIGHT = 5
+    FIGHT = 6
+
+class TRAPS(Enum):
+    ## Traps have setup time
+    FRONTTOWARDSENEMY = 0
+    HOMEALONE = 1
+    SNAILPROBLEM = 2
+    BANGBANGBANG = 3
+
+class WEAPONS(Enum):
+    ## Weapons have a maximum number of uses
+    DADDYSLITTLEMONSTER = 0
+    THEGREY = 1
+
+class TOOLS(Enum):
+    ## Tools have a maximum number of uses, and increase relevant character attribute until used up
+    RAVEON = 0
+    MOLLYPOP = 1
+    LIGHTBRINGER = 2
+    LOCKPICKINGLAWYER = 3
+    BOSNIANTOOL = 4
 
 class compute:
     def __init__(self):
@@ -202,7 +247,8 @@ class compute:
             [room_type.KITCHEN]*5+\
             [room_type.HALLWAY]*10+\
             [room_type.STUDY]*10+\
-            [room_type.LIBRARY]*5)
+            [room_type.LIBRARY]*5+\
+            [room_type.CHIMNEY]*5)
     def RANDOMIZE_INGREDIENT_NAME(self):
         return random.choice([e for e in ingredient_name])
     def ALIGNMENT(self):

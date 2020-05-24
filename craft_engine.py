@@ -2,35 +2,9 @@
 from enum import Enum
 if __name__=='__main__':
     # testing
-    from _abstr import ingredient_name as ing
+    from _abstr import ingredient_name as ing, SPELLS, TRAPS, WEAPONS, TOOLS
 else:
-    from ._abstr import ingredient_name as ing
-
-
-class SPELLS(Enum):
-    ## Spells have consumption time
-    WISHFORHELP = 0
-    HOUSESALAD = 1
-    HEALINGMAX = 2
-
-class TRAPS(Enum):
-    ## Traps have setup time
-    FRONTTOWARDSENEMY = 0
-    HOMEALONE = 1
-    SNAILPROBLEM = 2
-    BANGBANGBANG = 3
-
-class WEAPONS(Enum):
-    ## Weapons have a maximum number of uses
-    DADDYSLITTLEMONSTER = 0
-    THEGREY = 1
-
-class TOOLS(Enum):
-    ## Tools have a maximum number of uses, and increase relevant character attribute until used up
-    RAVEON = 0
-    MOLLYPOP = 1
-    LIGHTBRINGER = 2
-
+    from ._abstr import ingredient_name as ing, SPELLS, TRAPS, WEAPONS, TOOLS
 
 spells = {
     "WISHFORHELP":("Wish for help", 
@@ -39,20 +13,42 @@ spells = {
         ing.YELLOWTEALIGHT, 
         ing.MATCHSTICK]),
     "HOUSESALAD":("House Salad", 
-    "This is the super salad. Grants 10 health points", [
+    "This is the super salad. Grants 70 health points", [
         ing.SCISSORHALVE, 
         ing.ICEBERGLETTUCE, 
         ing.TOMATO, 
         ing.CROUTONS, 
         ing.OLIVEOIL, 
         ing.VINEGAR]),
-    "HEALINGMAX":("Max Healing Potion", 
-    "Grants 70 health points", [
+    "HEALINGMINOR":("Griffin Potion",
+    "Your sweet baby healing potion. Grants 10 health points", [
+        ing.BOTTLE,
+        ing.MOONWATER,])
+    "HEALINGMIDDLE":("Travis Potion",
+    "Your middlest healing potion. Grants 30 health points", [
+        ing.BOTTLE,
+        ing.QUARTZ,
+        ing.MOONWATER,])
+    "HEALINGMAX":("Justin Potion", 
+    "Your oldest healing potion. Grants 50 health points", [
+        ing.BOTTLE,
         ing.ROSEMARY, 
         ing.QUARTZ, 
         ing.WHITETEALIGHT, 
         ing.MOONWATER, 
         ing.MATCHSTICK]),
+    "FLIGHT":("Flight",
+    "The parasypathetic nervous system reacts...", [
+        ing.REISHIMUSHROOM,
+        ing.MOONWATER,
+        ing.ROSEMARY,
+        ing.BOTTLE]),
+    "FIGHT":("Fight",
+    "...and you're in fight or flight mode", [
+        ing.BOTTLE,
+        ing.BLACKWIDOW,
+        ing.OLEANDER,
+        ing.NIGHTSHADE]),
 }
 
 traps = {
@@ -105,9 +101,17 @@ tools = {
         ing.BATTERY]),
     "LIGHTBRINGER": ("Lightbringer", 
     "Lord of light! Come to us in our darkness... For the night is dark and full of terrors", [
+        TOOLS.MOLLYPOP,
         ing.FLASHBULB,
         ing.CIRCUIT,
-        ing.BATTERY,
-        ing.SMALLBOX,
-        ing.SCREWS])
+        ing.BATTERY]),
+    "LOCKPICKINGLAWYER":("The Lockpicking Laywer",
+    "This is The Lockpicking Laywer, and today I have something special for you",[
+        ing.COPPERWIRE,
+        ing.NAIL]),
+    "BOSNIANTOOL":("BosnianBill",
+    "We're just gonna use the tool that BosnianBill and I made",[
+        TOOLS.LOCKPICKINGLAWYER,
+        ing.PIPE,
+        ing.SPRING]),
 }
