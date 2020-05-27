@@ -2,9 +2,9 @@
 from enum import Enum
 if __name__=='__main__':
     # testing
-    from _abstr import ingredient_name as ing, SPELLS, TRAPS, WEAPONS, TOOLS
+    from _abstr import ingredient_name as ing, SPELLS, TRAPS, WEAPONS, TOOLS, SPECIAL
 else:
-    from ._abstr import ingredient_name as ing, SPELLS, TRAPS, WEAPONS, TOOLS
+    from ._abstr import ingredient_name as ing, SPELLS, TRAPS, WEAPONS, TOOLS, SPECIAL
 
 spells = {
     "WISHFORHELP":("Wish for help", 
@@ -114,4 +114,10 @@ tools = {
         TOOLS.LOCKPICKINGLAWYER,
         ing.PIPE,
         ing.SPRING]),
+}
+
+special = {
+    "THEGIFTER":("The Gifter","So That's how he gets them down the chimney so fast",[
+        SPECIAL.THEGIFTER,
+    ])
 }

@@ -209,6 +209,9 @@ class WEAPONS(Enum):
     DADDYSLITTLEMONSTER = 0
     THEGREY = 1
 
+class SPECIAL(Enum):
+    THEGIFTER = 0
+
 class TOOLS(Enum):
     """Tools have a maximum number of uses, and increase relevant character attribute until used up"""
     RAVEON = 0
@@ -216,6 +219,27 @@ class TOOLS(Enum):
     LIGHTBRINGER = 2
     LOCKPICKINGLAWYER = 3
     BOSNIANTOOL = 4
+
+class ACTION(Enum):
+    STARTTRADE = 0
+    FUCK = 1
+    MURDER = 2
+    GETFREETRAP = 10
+    GETFREETOOL = 11 
+    GETFREESPELL = 12 # gifts crafted spell
+    GETFREECRAFT = 13 # unlocks acraft
+    GETFREEMAGIC = 14  # unlocks a spell
+    GETFREEITEM = 15 # gifts a completed craft
+    GETFREEING = 16 # gifts a free ingredient
+    GETFREEWEAPON = 15
+    # Gen 100->score->pick highest item
+    INCREASEINT = 20
+    INCREASECHA = 21
+    INCREASESTR = 22
+    INCREASELCK = 23
+    INCREASEPCT = 24
+    # Specific Character Actions
+    GIVESANTAGIFT = 100 # 
 
 class compute:
     """Class defines how items and attributes are randomized in game. Also creates scores and computes affect."""
@@ -279,6 +303,8 @@ class compute:
     def RANDOMIZE_SIZE_ALTAR(self):
         """Returns the size an altar is allowed to be. Currently only returns size.SMALL"""
         return size.SMALL
+    def RANDOMIZE_WEAPON_DPS(self):
+        return random.choice([1]*5+[2]*5+[3]*4+[4]*3+[5]*2)
         
 
 if __name__ == "__main__":

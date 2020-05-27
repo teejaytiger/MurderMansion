@@ -2,7 +2,7 @@ from abc import ABC
 import random
 import datetime, pytz
 from enum import IntEnum
-from _abstr import _abstr, compute, ingredient_name
+from _abstr import _abstr, compute, ingredient_name, SPECIAL
 
 
 """
@@ -29,6 +29,20 @@ class _item (_abstr):
         self.rarity = compute.RANDOMIZE_RARITY
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
+        self.special = {
+            SPECIAL.THEGIFTER:MAKE_THE_GIFTER,
+        }
+
+class WEAPON(_item):
+    def __init__(self):
+        self.modifiers = {}
+        self.score = 0
+        self.size = compute.RANDOMIZE_SIZE_BOOK()
+        self.durability = compute().RANDOMIZE_DURABILITY()
+        self.rarity = compute().RANDOMIZE_RARITY()
+        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
+        self.alignment = compute().alignment()
+        self.damage_per_turn = compute().RANDOMIZE_WEAPON_DPS()
 
 class BOOK (_item):
     """
