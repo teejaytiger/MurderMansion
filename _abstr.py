@@ -28,6 +28,32 @@ class _abstr (ABC):
         """
         self.alignment = 0.0 ## any curse or bless effects normalized -1 to 1
 
+class item_type(Enum):
+    BOOK = 0
+    WEAPON = 1
+    LIGHT = 2
+    ALTAR = 3
+    THEGIFTER = 4
+    MARCUSMUNITIONS = 5
+
+class chars:
+    DOUBLE_LEFT_TOP = u'\u2554' # ╔ 
+    DOUBLE_VERTI_PIPE = u'\u2551' # ║ 
+    DOUBLE_LEFT_BOTTOM = u'\u255a' # ╚ 
+    DOUBLE_RIGHT_TOP = u'\u2557' # ╗ 
+    DOUBLE_RIGHT_BOTTOM = u'\u255d' # ╝ 
+    DOUBLE_HORIZ_PIPE = u'\u2550' # ═ 
+    SINGLE_LEFT_TOP = u'\u250c' # ┌ 
+    SINGLE_VERTI_PIPE = u'\u2502' # │ 
+    SINGLE_LEFT_BOTTOM = u'\u2514' # └ 
+    SINGLE_RIGHT_TOP = u'\u2510' # ┐ 
+    SINGLE_RIGHT_BOTTOM = u'\u2518' # ┘ 
+    SINGLE_HORIZ_PIPE = u'\u2500' # ─
+    BOOK_ICON = chr(10026)
+    ALTAR_ICON = chr(9912)
+    LIGHT_ICON = chr(9775)
+    CRAFT_ICON = chr(9881)
+
 class size(Enum):
     """Enumeration of all item sizes (except lamps)"""
     TINY = 0        ## weight 0
@@ -36,7 +62,7 @@ class size(Enum):
     LARGE = 3
     HUGE = 4
 
-class lamp_size(Enum): 
+class lamp_style(Enum): 
     """Enumeration of Lamp types. Affects book reading time. """
     CANDLE = 0      ## 5
     SCONCE = 1      ## 3
@@ -209,9 +235,6 @@ class WEAPONS(Enum):
     DADDYSLITTLEMONSTER = 0
     THEGREY = 1
 
-class SPECIAL(Enum):
-    THEGIFTER = 0
-
 class TOOLS(Enum):
     """Tools have a maximum number of uses, and increase relevant character attribute until used up"""
     RAVEON = 0
@@ -270,13 +293,13 @@ class compute:
             [size.SMALL]*5+\
             [size.MEDUIM]*3+\
             [size.LARGE]*1)
-    def RANDOMIZE_SIZE_LAMP(self):
+    def RANDOMIZE_STYLE_LAMP(self):
         """Randomizes the type of lamp in a room. Books must be read in a room with a light. Light brightness affects book reading time."""
         return random.choice(
-            [lamp_size.CANDLE]*5+\
-            [lamp_size.SCONCE]*3+\
-            [lamp_size.DESKLAMP]*1+\
-            [lamp_size.FLOORLAMP]*1)
+            [lamp_style.CANDLE]*5+\
+            [lamp_style.SCONCE]*3+\
+            [lamp_style.DESKLAMP]*1+\
+            [lamp_style.FLOORLAMP]*1)
     def RANDOMIZE_ROOM_TYPE(self):
         """Randomizes the style of room. Some rooms have more loot and more slots for people to show up!"""
         return random.choice(
@@ -303,8 +326,13 @@ class compute:
     def RANDOMIZE_SIZE_ALTAR(self):
         """Returns the size an altar is allowed to be. Currently only returns size.SMALL"""
         return size.SMALL
+    def RANDOMIZE_SIZE_LAMP(self):
+        """Returns the size an altar is allowed to be. Currently only returns size.SMALL"""
+        return size.MEDUIM
     def RANDOMIZE_WEAPON_DPS(self):
         return random.choice([1]*5+[2]*5+[3]*4+[4]*3+[5]*2)
+    def RANDOMIZE_LIGHT_STATUS(self):
+        return random.choice([available.AVAILABLE]+[available.UNAVAILABLE])
         
 
 if __name__ == "__main__":

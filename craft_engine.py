@@ -117,7 +117,10 @@ tools = {
 }
 
 special = {
-    "THEGIFTER":("The Gifter","So That's how he gets them down the chimney so fast",[
+    "THEGIFTER":("The Gifter","Cindy Lou sends her best...",[ # Trap, probaby cookies and milk based
         SPECIAL.THEGIFTER,
+    ]),
+    "MARCUSMUNITIONS":("Marcus Munitions","What, you don't like money?",[ # One shot gun
+        SPECIAL.MARCUSMUNITIONS,
     ])
 }

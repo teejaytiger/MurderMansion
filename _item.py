@@ -1,8 +1,9 @@
 from abc import ABC
+import sys
 import random
 import datetime, pytz
 from enum import IntEnum
-from _abstr import _abstr, compute, ingredient_name, SPECIAL
+from _abstr import _abstr, compute, ingredient_name, chars as ch, item_type
 
 
 """
@@ -19,9 +20,9 @@ class _item (_abstr):
     """
     def __init__(self):
         ## Defined locally
-        self.size ## affects where it can be spawned
-        self.modifiers
-        self.score
+        self.size = None ## affects where it can be spawned
+        self.modifiers = {}
+        self.score = 0
         ## Declared in _abstr.py
         ## how many uses before it breaks, -0 for n/a, -1 for ultimate robustness
         self.durability = compute().RANDOMIZE_DURABILITY()
@@ -29,20 +30,36 @@ class _item (_abstr):
         self.rarity = compute.RANDOMIZE_RARITY
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
-        self.special = {
-            SPECIAL.THEGIFTER:MAKE_THE_GIFTER,
-        }
+        self.name = None
+        self.icon = ""
+        self.extras = {}
+
+    def __str__(self): 
+        wid = 40
+        s1 = " {} {} {}".format(self.icon, self.durability.name, self.name.name)
+        s2 = "({}, {})".format(self.size.name, self.rarity.name)
+        return "".join(
+            [ch.DOUBLE_LEFT_TOP]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_TOP]+["\n"]+\
+            [ch.DOUBLE_VERTI_PIPE]+[s1]+[" "]*(wid-len(s1))+[ch.DOUBLE_VERTI_PIPE]+["\n"]+\
+            [ch.DOUBLE_VERTI_PIPE]+[s2]+[" "]*(wid-len(s2))+[ch.DOUBLE_VERTI_PIPE]+["\n"]+\
+            [ch.DOUBLE_LEFT_BOTTOM]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_BOTTOM]
+            )
+    #def __repr__(self): return "".join([ch.DOUBLE_LEFT_TOP]+[ch.DOUBLE_HORIZ_PIPE]*30+[ch.DOUBLE_RIGHT_TOP])
+            
 
 class WEAPON(_item):
     def __init__(self):
         self.modifiers = {}
         self.score = 0
-        self.size = compute.RANDOMIZE_SIZE_BOOK()
+        self.size = compute().RANDOMIZE_SIZE_BOOK()
         self.durability = compute().RANDOMIZE_DURABILITY()
         self.rarity = compute().RANDOMIZE_RARITY()
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.alignment = compute().alignment()
-        self.damage_per_turn = compute().RANDOMIZE_WEAPON_DPS()
+        self.alignment = compute().ALIGNMENT()
+        self.name = item_type.WEAPON
+        self.icon = name.name
+        self.extras = {"damage_per_turn":compute().RANDOMIZE_WEAPON_DPS()}
+    def __str__(self): return super().__str__()
 
 class BOOK (_item):
     """
@@ -57,6 +74,9 @@ class BOOK (_item):
         self.rarity = compute().RANDOMIZE_RARITY()
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
+        self.name = item_type.BOOK
+        self.icon = ch.BOOK_ICON
+    def __str__(self): return super().__str__()
         
 class LIGHT (_item):
     """
@@ -71,7 +91,11 @@ class LIGHT (_item):
         self.rarity = compute().RANDOMIZE_RARITY()
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
-        self.status = False # you can only read books in rooms that have lights that are turned on
+        self.name = compute().RANDOMIZE_STYLE_LAMP()
+        self.icon = ch.LIGHT_ICON
+        self.extras = {
+            "status":compute().RANDOMIZE_LIGHT_STATUS} # you can only read books in rooms that have lights that are turned on
+    def __str__(self): return super().__str__()
 
 class ALTAR (_item):
     """
@@ -86,7 +110,9 @@ class ALTAR (_item):
         self.rarity = compute().RANDOMIZE_RARITY()
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
-        self.max_uses = self.durability.value
+        self.name = item_type.ALTAR
+        self.icon = ch.ALTAR_ICON
+    def __str__(self): return super().__str__()
 
 class INGREDIENT(_item):
     """
@@ -100,35 +126,26 @@ class INGREDIENT(_item):
         self.rarity = compute().RANDOMIZE_RARITY()
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
-        self.name = name
-        if not name:
-            self.name = compute().RANDOMIZE_INGREDIENT_NAME()
+        self.name = compute().RANDOMIZE_INGREDIENT_NAME()
+        self.icon = ch.CRAFT_ICON
+    def __str__(self): return super().__str__()
         
-
 if __name__ == "__main__":
     books = []
     lights = []
     altars = []
     ingredients = []
-    for i in range(0, 10):
+    for i in range(0, 1):
         books.append(BOOK())
         lights.append(LIGHT())
         altars.append(ALTAR())
         ingredients.append(INGREDIENT())
     
     for b in books:
-        print("--------book------------")
-        print("size: {0}\ndblt: {1}\nrare: {2}\ngood: {3}".format(
-            b.size.name, b.durability.name, b.rarity.name, b.alignment))
+        print(b)
     for b in lights:
-        print("--------light-----------")
-        print("size: {0}\ndblt: {1}\nrare: {2}\ngood: {3}\nstat: {4}".format(
-            b.size.name, b.durability.name, b.rarity.name, b.alignment, b.status))
+        print(b)
     for b in altars:
-        print("--------altar-----------")
-        print("size: {0}\ndblt: {1}\nrare: {2}\ngood: {3}\nuses: {4}".format(
-            b.size.name, b.durability.name, b.rarity.name, b.alignment, b.max_uses))
+        print(b)
     for b in ingredients:
-        print("--------ingredient------")
-        print("size: {0}\ndblt: {1}\nrare: {2}\ngood: {3}\nname: {4}".format(
-            b.size.name, b.durability.name, b.rarity.name, b.alignment, b.name.name))
+        print(b)
