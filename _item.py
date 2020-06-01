@@ -84,13 +84,13 @@ class TRAP(_craft):
         self.alignment = compute().ALIGNMENT()
         self.effect_funcs = []
     def __str__(self): return super().__str__()
-class WEAPON(_craft):
+class WEAPON2(_craft):
     def __init__(self):
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.modifiers = {}
         self.alignment = compute().ALIGNMENT()
         self.effect_funcs = []
-        self.score = 
+        self.score = 0
         self.DPS = self.compute_dps()
     def __str__(self): return super().__str__()
     def compute_dps(self): return self.score*ceil((self.alignment+self.score)//2+(self.rarity.value+1))
