@@ -53,7 +53,49 @@ class _item (_abstr):
     def get_uses(self):
         fac = (self.durability.value+1)/4 + (self.rarity.value+1)/4
         return ceil(fac + self.alignment*fac)
-        
+
+class _craft(_abstr):
+    def __init__(self):
+        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
+        self.modifiers = {}
+        self.alignment = compute().ALIGNMENT()
+        self.effect_funcs = []
+    def __str__(self): 
+        pass
+
+class SPELL(_craft):
+    def __init__(self):
+        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
+        self.modifiers = {}
+        self.alignment = compute().ALIGNMENT()
+        self.effect_funcs = []
+    def __str__(self): return super().__str__()
+class TOOL(_craft):
+    def __init__(self):
+        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
+        self.modifiers = {}
+        self.alignment = compute().ALIGNMENT()
+        self.effect_funcs = []
+    def __str__(self): return super().__str__()
+class TRAP(_craft):
+    def __init__(self):
+        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
+        self.modifiers = {}
+        self.alignment = compute().ALIGNMENT()
+        self.effect_funcs = []
+    def __str__(self): return super().__str__()
+class WEAPON(_craft):
+    def __init__(self):
+        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
+        self.modifiers = {}
+        self.alignment = compute().ALIGNMENT()
+        self.effect_funcs = []
+        self.score = 
+        self.DPS = self.compute_dps()
+    def __str__(self): return super().__str__()
+    def compute_dps(self): return self.score*ceil((self.alignment+self.score)//2+(self.rarity.value+1))
+
+
 class WEAPON(_item):
     def __init__(self):
         self.modifiers = {}

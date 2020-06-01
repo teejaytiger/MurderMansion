@@ -87,7 +87,7 @@ class durability(Enum):
     RAMSHACKLE = 1  ## 10
     ADEQUATE = 2    ## 70
     STURDY = 3      ## 9
-    CHUNKY = 4      ## 5
+    CHONKY = 4      ## 5
     YOKED = 5       ## 1
     
 class room_type(Enum):
@@ -178,6 +178,7 @@ class ingredient_name(Enum):
     OLEANDER = 29       # Elisabeth
     ASH = 30            # Elisabeth
     BOTTLE = 31         # common item
+    FLOUR = 32          # 
     ## predominantly crafts
     MATCHSTICK = 51     # 
     PIPE = 52           # 
@@ -194,7 +195,7 @@ class ingredient_name(Enum):
     GLASSSHARD = 63     # 
     STRING = 64         # 
     ROPE = 65           # 
-    NEWSPAPER = 66      # 
+    PAPER = 66          # 
     PAINTCAN = 67       # 
     DUCTTAPE = 68       # 
     FLASHBULB = 69      # 
@@ -202,6 +203,8 @@ class ingredient_name(Enum):
     GLOWSTICK = 71      # 
     BATTERY = 72        # 
     CIRCUIT = 73        # 
+    CLOTH = 74          # 
+    STEELWOOL = 75      # 
     ## Haley's salad
     ICEBERGLETTUCE = 100# 
     TOMATO = 101        # 
@@ -234,34 +237,40 @@ class TRAPS(Enum):
     BANGBANGBANG = 3
     SPILTLEGOS = 4
 
-class SPEACIAL_WEAPONS(Enum):
+class SPECIAL(Enum):
     """Weapons have a maximum number of uses"""
-    DADDYSLITTLEMONSTER = 0
-    THEGREY = 1
+    THEGIFTER = 0
+    MARCUSMUNITIONS = 1
+    SUCTIONCUPDILDO = 2
 
 class WEAPONS(Enum):
     """Weapons have a maximum number of uses"""
     TSHIRTCANNON = 0
-    ROLLOFQUARTERS = 1
-    CANDLESTICK = 3
+    #ROLLOFQUARTERS = 1
+    #CANDLESTICK = 3
     SOAPINASOCK = 4
     SHARPPENCIL = 5
     POCKETSAND = 6
     TEDDYSTICK = 7
     REALLYHOTPIZZA = 8
-    FARTCANNON = 10
-    THROWINGCARDS = 11
-    THICKRUBBERBANDS = 12
+    TSHIRTSNIPER = 9
+    # FARTCANNON = 10
+    # THROWINGCARDS = 11
+    # THICKRUBBERBANDS = 12
     GARROTEFLOSS = 13
-    PLANKY = 14
-    SPLINTERPLACER5000 = 15 #Haley
+    # PLANKY = 14
+    SPLINTERPLACER5K = 15 #Haley
     TOEKNIFE = 16
     BROTORCH = 17
-    COKEANDMENTOS = 18
-    POTATOGUN = 19
-    SKILLET = 20
-    SUCTIONCUPDILDO = 21
-    CATPEESQUIRTGUN = 22
+    # COKEANDMENTOS = 18
+    # POTATOGUN = 19
+    # SKILLET = 20
+    # CATPEESQUIRTGUN = 22
+    ENTRYLEVEL = 23
+    THECONSTABLE = 24
+    FAGGOT = 25
+    DADDYSLITTLEMONSTER = 26
+    THEGREY = 27
 
 class TOOLS(Enum):
     """Tools have a maximum number of uses, and increase relevant character attribute until used up"""
@@ -270,6 +279,7 @@ class TOOLS(Enum):
     LIGHTBRINGER = 2
     LOCKPICKINGLAWYER = 3
     BOSNIANTOOL = 4
+    JIMSHAPIRO = 5
 
 class ACTION(Enum):
     STARTTRADE = 0
@@ -303,7 +313,7 @@ class compute:
             [durability.RAMSHACKLE]*10+\
             [durability.ADEQUATE]*70+\
             [durability.STURDY]*9+\
-            [durability.CHUNKY]*5+\
+            [durability.CHONKY]*5+\
             [durability.YOKED]*1)
     def RANDOMIZE_RARITY(self):
         """Randomizes an item's rarity - can be used to affect the quality of crafts"""
@@ -336,8 +346,7 @@ class compute:
             [room_type.KITCHEN]*5+\
             [room_type.HALLWAY]*10+\
             [room_type.STUDY]*10+\
-            [room_type.LIBRARY]*5+\
-            [room_type.CHIMNEY]*5)
+            [room_type.LIBRARY]*5)
     def RANDOMIZE_INGREDIENT_NAME(self):
         """Randomizes the ingredients that appear in room containers."""
         return random.choice([e for e in ingredient_name])

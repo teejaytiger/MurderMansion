@@ -74,12 +74,14 @@ if __name__ == "__main__":
     for container, items in r.containers.items():
         print("container: {0}".format(container.name))
         for item in items:
-            print("    * {0} {1} ({2})".format(item.durability.name, item.name.name, item.rarity.name))
-    if r.book: print("Has {} {} BOOK ({})".format(r.book.size.name, r.book.durability.name, r.book.rarity.name)) 
+            print(item)
+        print("\n")
+    print("SPECIALS")
+    if r.book: print(r.book) 
     else: print("No books")
-    if r.light: print("Has {1} {0} ({2})".format(r.light.size.name, r.light.durability.name, r.light.rarity.name)) 
+    if r.light: print(r.light) 
     else: print("No lights")
-    if r.altar: print("Has {} {} ALTAR ({})".format(r.altar.size.name, r.altar.durability.name, r.altar.rarity.name)) 
+    if r.altar: print(r.altar) 
     else: print("No altars")
     print("Time to encounter: {}".format(r.time_to_encounter))
     for door in r.doors:
