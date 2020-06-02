@@ -4,7 +4,7 @@ import sys
 import random
 import datetime, pytz
 from enum import IntEnum
-from _abstr import _abstr, compute, ingredient_name, chars as ch, item_type
+from _abstr import _abstr, compute, ingredient_name, chars as ch, item_type, durability, rarity, craft_engine
 
 
 """
@@ -20,17 +20,13 @@ class _item (_abstr):
     Abstract item class used to 
     """
     def __init__(self):
-        ## Defined locally
         self.size = None ## affects where it can be spawned
         self.modifiers = {}
         self.score = 0
-        ## Declared in _abstr.py
-        ## how many uses before it breaks, -0 for n/a, -1 for ultimate robustness
-        self.durability = compute().RANDOMIZE_DURABILITY()
-        ## number of instances permitted for each map
-        self.rarity = compute.RANDOMIZE_RARITY
+        self.durability = durability.FRAGILE
+        self.rarity = rarity.COMMON
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.alignment = compute().ALIGNMENT()
+        self.alignment = 0
         self.name = None
         self.icon = ""
         self.extras = {}
@@ -47,72 +43,79 @@ class _item (_abstr):
             [ch.DOUBLE_LEFT_TOP]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_TOP]+["\n"]+\
             [ch.DOUBLE_VERTI_PIPE]+[s1]+[" "]*g1+[str(self.badge), ch.DOUBLE_VERTI_PIPE]+["\n"]+\
             [ch.DOUBLE_VERTI_PIPE]+[s2]+[" "]*g2+[str(self.countdown), ch.DOUBLE_VERTI_PIPE]+["\n"]+\
-            [ch.DOUBLE_LEFT_BOTTOM]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_BOTTOM]
-            )
-    #def __repr__(self): return "".join([ch.DOUBLE_LEFT_TOP]+[ch.DOUBLE_HORIZ_PIPE]*30+[ch.DOUBLE_RIGHT_TOP])
+            [ch.DOUBLE_LEFT_BOTTOM]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_BOTTOM])
     def get_uses(self):
         fac = (self.durability.value+1)/4 + (self.rarity.value+1)/4
         return ceil(fac + self.alignment*fac)
 
 class _craft(_abstr):
-    def __init__(self):
+    def __init__(self, item_t=item_type.UNSET):
+        self.craft_type = item_t
+        self.craft_name = item_t
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.modifiers = {}
-        self.alignment = compute().ALIGNMENT()
-        self.effect_funcs = []
+        self.modifiers = { # set by the game engine
+            "str":None, ## Struggle - Modifies chance of escaping conflict and performing successful close up attacks and defenses
+            "pct":None, ## Perception - Modified chance of identifying hard to see objects or objects that may be of value
+            "lck":None, ## Luck - Modifies the chance of getting rare items and performing spells and critical hits, affected by alignment
+            "cha":None, ## Charisma - Improves difficulty modifier of certain dialogue actions
+            "int":None, ## Intelligence - Improves crafting and spellcasting ability
+            "hps":70    ## character hit points, recovered with spells, decreased with spells and attacks, 0 is dead, no max
+        }
+        self.effect_funcs = [] # set by the game engine
+        self.ingredients = [] # populated by the craft engine
+        self.badge = ""
+        self.quantity = ""
+        self.text = ""
+        self.subtext = ""
+        self.compute_alignment()
+        self.name = ""
     def __str__(self): 
-        pass
+        wid = 40
+        s1 = " {} {} {}".format(self.icon, self.durability.name, self.name.name)
+        s2 = "({}, {})".format(self.size.name, self.rarity.name)
+        g1 = wid-len(s1)-len(str(self.badge))
+        g2 = wid-len(s2)-len(str(self.countdown))
+        modifiers = []
+        # get the modifiers for the card
+        for mod, eff in self.modifiers.items():
+            s = mod+": "+str(eff)
+            gap = wid-len(s)
+            modifiers += [ch.DOUBLE_VERTI_PIPE]+[s]+[" "]*gap+[ch.DOUBLE_VERTI_PIPE]+["\n"]
+        return "".join(
+            [ch.DOUBLE_LEFT_TOP]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_TOP]+["\n"]+\
+            [ch.DOUBLE_VERTI_PIPE]+[s1]+[" "]*g1+[str(self.badge), ch.DOUBLE_VERTI_PIPE]+["\n"]+\
+            [ch.DOUBLE_VERTI_PIPE]+[s2]+[" "]*g2+[str(self.quantity), ch.DOUBLE_VERTI_PIPE]+["\n"]+\
+            modifiers+\
+            [ch.DOUBLE_LEFT_BOTTOM]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_BOTTOM])
+    def compute_alignment(self):
+        total = 0.0
+        for ingredient in self.ingredients:
+            total+=ingredient.alignment
+        if self.ingredients: self.alignment = total/len(self.ingredients)
+        else: self.alignment = -1
+    def compute_score(self):
+        total = 0.0
+        for ingredient in self.ingredients:
+            total+=ingredient.score
+        if self.ingredients: self.score = total/len(self.ingredients)
+    def compute_damage(self):
+        return self.score*ceil((self.alignment+self.score)//2+(self.rarity.value+1))
+    def randomize(self):
+        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
+        self.compute_alignment()
+        self.modifiers = { # set by the game engine
+            "str":random.randrange(-1, 2), ## Struggle - Modifies chance of escaping conflict and performing successful close up attacks and defenses
+            "pct":random.randrange(-1, 2), ## Perception - Modified chance of identifying hard to see objects or objects that may be of value
+            "lck":random.randrange(-1, 2), ## Luck - Modifies the chance of getting rare items and performing spells and critical hits, affected by alignment
+            "cha":random.randrange(-1, 2), ## Charisma - Improves difficulty modifier of certain dialogue actions
+            "int":random.randrange(-1, 2), ## Intelligence - Improves crafting and spellcasting ability
+            "hps":random.randrange(-1, 2)    ## character hit points, recovered with spells, decreased with spells and attacks, 0 is dead, no max
+        }
+        for i in range(0, random.randrange(2, 5)):
+            self.ingredients.append(INGREDIENT())
+        self.badge = ""
+        self.quantity = 0
 
-class SPELL(_craft):
-    def __init__(self):
-        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.modifiers = {}
-        self.alignment = compute().ALIGNMENT()
-        self.effect_funcs = []
-    def __str__(self): return super().__str__()
-class TOOL(_craft):
-    def __init__(self):
-        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.modifiers = {}
-        self.alignment = compute().ALIGNMENT()
-        self.effect_funcs = []
-    def __str__(self): return super().__str__()
-class TRAP(_craft):
-    def __init__(self):
-        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.modifiers = {}
-        self.alignment = compute().ALIGNMENT()
-        self.effect_funcs = []
-    def __str__(self): return super().__str__()
-class WEAPON2(_craft):
-    def __init__(self):
-        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.modifiers = {}
-        self.alignment = compute().ALIGNMENT()
-        self.effect_funcs = []
-        self.score = 0
-        self.DPS = self.compute_dps()
-    def __str__(self): return super().__str__()
-    def compute_dps(self): return self.score*ceil((self.alignment+self.score)//2+(self.rarity.value+1))
-
-
-class WEAPON(_item):
-    def __init__(self):
-        self.modifiers = {}
-        self.size = compute().RANDOMIZE_SIZE_BOOK()
-        self.durability = compute().RANDOMIZE_DURABILITY()
-        self.rarity = compute().RANDOMIZE_RARITY()
-        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.alignment = compute().ALIGNMENT()
-        self.name = compute().RANDOMIZE_WEAPON_NAME()
-        self.icon = ch.SWORD_ICON
-        self.extras = {"damage_per_turn":compute().RANDOMIZE_WEAPON_DPS()}
-        self.score = self.get_uses()
-        self.badge = "DPS "+str(self.compute_dps())
-        self.countdown = self.score
-    def __str__(self): return super().__str__()
-    def get_uses(self): return super().get_uses()
-    def compute_dps(self): return self.score*ceil((self.alignment+self.score)//2+(self.rarity.value+1))
 
 class BOOK (_item):
     """
@@ -129,7 +132,7 @@ class BOOK (_item):
         self.alignment = compute().ALIGNMENT()
         self.name = item_type.BOOK
         self.icon = ch.BOOK_ICON
-        self.badge = str(random.choice([6, 7, 8, 9, 10]))+"s"
+        self.badge = str(random.choice([6, 7, 8, 9, 10]))+"s" # time to reads
         self.countdown = 1
     def __str__(self): return super().__str__()
     def time_to_read(self): pass
@@ -179,14 +182,14 @@ class INGREDIENT(_item):
     """
     Used in spellcasting and weapon crafting
     """
-    def __init__(self, name=None):
+    def __init__(self):
         self.modifiers = {}
-        self.score = 0
         self.size = compute().RANDOMIZE_SIZE_INGREDIENT()
         self.durability = compute().RANDOMIZE_DURABILITY()
         self.rarity = compute().RANDOMIZE_RARITY()
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
+        self.score = super().get_uses()
         self.name = compute().RANDOMIZE_INGREDIENT_NAME()
         self.icon = ch.CRAFT_ICON
         self.badge = ""
@@ -198,13 +201,11 @@ if __name__ == "__main__":
     lights = []
     altars = []
     ingredients = []
-    weapons = []
     for i in range(0, 1):
         books.append(BOOK())
         lights.append(LIGHT())
         altars.append(ALTAR())
         ingredients.append(INGREDIENT())
-        weapons.append(WEAPON())
     
     for b in books:
         print(b)
@@ -214,10 +215,5 @@ if __name__ == "__main__":
         print(b)
     for b in ingredients:
         print(b)
-    for b in weapons:
-        print(b)
-    for i in range(0, 20):
-        w = WEAPON()
-        #print("(Alignment + item score)/2 + (rarity + 1)")
-        #print ("DPS: ({}+{})/2+({}+1) = {}".format(w.alignment, w.score, w.rarity.value, w.compute_dps()))
-        print(w)
+
+    # randomize a weapon from craft_engine
