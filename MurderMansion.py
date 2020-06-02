@@ -39,7 +39,7 @@ class MurderMansion:
 
         for i in craft.ingredients: s += i.__str__()+"\n" # debug ing build
         s = "CRAFT: {}\n{}\n{}\n{}\n{}\n".format(
-            craft_name, 
+            craft_name.name, 
             craft.text, 
             craft.subtext,
             craft.score,

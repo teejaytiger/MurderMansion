@@ -84,7 +84,7 @@ class rarity(Enum):
     MYTHOLOGICAL = 5 ## 1
 
 class durability(Enum):
-    """Enumeratio of item durabilities"""
+    """Enumeration of item durabilities"""
     ## MUST BE IN ORDER, ENUM USED IN CALCULATIONS
     FRAGILE = 0     ## 5
     RAMSHACKLE = 1  ## 10
@@ -520,7 +520,7 @@ class craft_engine:
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.DUCTTAPE]),
             WEAPONS.FAGGOT: ("Faggot", # level 3
-            "It's a bundle of sticks, and my best friend is gay", [0, 0, 0, 0, 0, 0], [
+            "It's a bundle of sticks, and also me.", [0, 0, 0, 0, 0, 0], [
                 WEAPONS.THECONSTABLE,
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.DUCTTAPE]),

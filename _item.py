@@ -71,7 +71,7 @@ class _craft(_abstr):
         self.name = ""
     def __str__(self): 
         wid = 40
-        s1 = " {} {} {}".format(self.icon, self.durability.name, self.name.name)
+        s1 = " {} {} {}".format(self.icon, self.durability.name, self.name)
         s2 = "({}, {})".format(self.size.name, self.rarity.name)
         g1 = wid-len(s1)-len(str(self.badge))
         g2 = wid-len(s2)-len(str(self.countdown))
@@ -205,6 +205,7 @@ if __name__ == "__main__":
         books.append(BOOK())
         lights.append(LIGHT())
         altars.append(ALTAR())
+    for i in range(0, 30):
         ingredients.append(INGREDIENT())
     
     for b in books:
