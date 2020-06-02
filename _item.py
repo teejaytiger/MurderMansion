@@ -70,23 +70,42 @@ class _craft(_abstr):
         self.compute_alignment()
         self.name = ""
     def __str__(self): 
-        wid = 40
-        s1 = " {} {} {}".format(self.icon, self.durability.name, self.name)
-        s2 = "({}, {})".format(self.size.name, self.rarity.name)
-        g1 = wid-len(s1)-len(str(self.badge))
-        g2 = wid-len(s2)-len(str(self.countdown))
-        modifiers = []
-        # get the modifiers for the card
-        for mod, eff in self.modifiers.items():
-            s = mod+": "+str(eff)
-            gap = wid-len(s)
-            modifiers += [ch.DOUBLE_VERTI_PIPE]+[s]+[" "]*gap+[ch.DOUBLE_VERTI_PIPE]+["\n"]
-        return "".join(
-            [ch.DOUBLE_LEFT_TOP]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_TOP]+["\n"]+\
-            [ch.DOUBLE_VERTI_PIPE]+[s1]+[" "]*g1+[str(self.badge), ch.DOUBLE_VERTI_PIPE]+["\n"]+\
-            [ch.DOUBLE_VERTI_PIPE]+[s2]+[" "]*g2+[str(self.quantity), ch.DOUBLE_VERTI_PIPE]+["\n"]+\
-            modifiers+\
-            [ch.DOUBLE_LEFT_BOTTOM]+[ch.DOUBLE_HORIZ_PIPE]*wid+[ch.DOUBLE_RIGHT_BOTTOM])
+        iconmap = {
+            item_type.WEAPON:ch.WEAPON_ICON,
+            item_type.SPELL:ch.SPELL_ICON,
+            item_type.TOOL:ch.TOOL_ICON,
+            item_type.TRAP:ch.TRAP_ICON,
+            item_type.UNSET:ch.UNSET_ICON}
+        wid = max([len(ing.name.name) for ing in self.ingredients])+2
+        ing_print = []
+        for ing in self.ingredients:
+            ing_print.append("+ "+ing.name.name) if self.alignment>=0 else ing_print.append("- "+ing.name.name)
+        # print(ing_print) # debug
+        s = "╔═══════╗\n"+"║   "+\
+            iconmap[self.craft_type]+"   ╠══╗ "
+        s+= "+ " if self.alignment>=0 else "- "
+        s+= self.text+"\n"
+        s+= "╚╦══════╝  ║ "+self.subtext+"\n"
+        s+= " ║         ╚══════════════╗ {}\n".format(self.badge)
+        s+= " ║  STR: {}{}CHA: {}{}║\n".format(
+            self.modifiers["str"]," "*(6-len(str(self.modifiers["str"]))), 
+            self.modifiers["cha"]," "*(6-len(str(self.modifiers["cha"]))))
+        s+= " ║  PCT: {}{}INT: {}{}║ {}\n".format(
+            self.modifiers["pct"]," "*(6-len(str(self.modifiers["pct"]))), 
+            self.modifiers["int"]," "*(6-len(str(self.modifiers["int"]))), self.badge)
+        s+= " ║  LCK: {}{}HPS: {}{}╔══╩{}\n".format(
+            self.modifiers["lck"]," "*(6-len(str(self.modifiers["lck"]))), 
+            self.modifiers["hps"]," "*(3-len(str(self.modifiers["hps"]))),
+            "═"*wid+"╗")
+        ing = ing_print.pop()
+        s+= " ╚═════════════════════╣ "+ing+" "*(wid+2-len(ing))+"║\n"
+        while ing_print:
+            ing = ing_print.pop()
+            s+= "                       ║ "+ing+" "*(wid+2-len(ing))+"║\n"
+        s+="                       ╚═══"+"═"*wid+"╝"
+            
+        return s
+
     def compute_alignment(self):
         total = 0.0
         for ingredient in self.ingredients:

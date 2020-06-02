@@ -52,11 +52,21 @@ class chars:
     SINGLE_RIGHT_TOP = u'\u2510' # ┐ 
     SINGLE_RIGHT_BOTTOM = u'\u2518' # ┘ 
     SINGLE_HORIZ_PIPE = u'\u2500' # ─
+    DOUBLE_T_RIGHT = u'\u2563' # ╣
+    DOUBLE_T_LEFT = u'\u2560' # ╠
+    DOUBLE_T_TOP = u'\u2566' # ╦
+    DOUBLE_T_BOTTOM = u'\u2569' # ╩
     BOOK_ICON = chr(10026)
     ALTAR_ICON = chr(9912)
     LIGHT_ICON = chr(9775)
     CRAFT_ICON = chr(9881)
-    SWORD_ICON = chr(9876)
+    WEAPON_ICON = chr(9876)
+    SPELL_ICON = chr(9708)
+    TRAP_ICON = chr(9637)
+    INGREDIENT_ICON = chr(9630)
+    TOOL_ICON = chr(9655)
+    UNSET_ICON = chr(9711)
+    
 
 class size(Enum):
     """Enumeration of all item sizes (except lamps)"""
@@ -383,6 +393,7 @@ class compute:
 class craft_engine:
     def __init__(self):
         self.spells = {
+            "type":item_type.SPELL,
             # [str, pct, lck, cha, int, hps]
             SPELLS.WISHFORHELP:("Wish for help", 
             "Wish someone would show up to help", [0, 0, .5, .1, 0, 0], [
@@ -429,8 +440,9 @@ class craft_engine:
         }
 
         self.traps = {
+            "type":item_type.TRAP,
             TRAPS.FRONTTOWARDSENEMY: ("Front Towards Enemy", # level 1
-            "I regret nothingredient_name. The end.", [3, 0, 0, 0, 0, 0], [
+            "I regret nothing. The end.", [3, 0, 0, 0, 0, 0], [
                 ingredient_name.SHOTGUNSHELL, 
                 ingredient_name.PIPE, 
                 ingredient_name.NAIL, 
@@ -472,6 +484,7 @@ class craft_engine:
         }
 
         self.weapons = {
+            "type":item_type.WEAPON,
             WEAPONS.DADDYSLITTLEMONSTER: ("Daddy's Little Monster", # level 1
             "It's nails on a stick, you get it", [0, 0, 0, 0, 0, 0], [
                 ingredient_name.WOODENDOWEL, 
@@ -560,6 +573,7 @@ class craft_engine:
         }
 
         self.tools = {
+            "type":item_type.TOOL,
             TOOLS.RAVEON: ("Rave On!", # level 1
             "You can't see them, but they can see you.", [0, 0, 0, 0, 0, 0], [
                 ingredient_name.WOODENDOWEL, 
@@ -586,7 +600,7 @@ class craft_engine:
                 ingredient_name.PIPE,
                 ingredient_name.SPRING]),
             TOOLS.JIMSHAPIRO: ("Jim Shapiro", # level 1
-            "JIM 'THE HAMMER' SHAPIRO", [0, 0, 0, 0, 0, 0], [
+            "Every single penny", [0, 0, 0, 0, 0, 0], [
                 ingredient_name.STRING,
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.WOODBLOCK]),
@@ -594,6 +608,7 @@ class craft_engine:
 
         # specials need to be initalized by the game engine as items and mapped to their enums
         self.special = {
+            "type":item_type.SPECIAL,
             SPECIAL.THEGIFTER:("The Gifter","Cindy Lou sends her best...", [0, 0, 0, 0, 0, 0], [ # Trap, probaby cookies and milk based
                 SPECIAL.THEGIFTER,
             ]),
