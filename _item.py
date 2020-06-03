@@ -95,12 +95,11 @@ class _craft(_abstr):
         for ing in self.ingredients:
             list_item = "+ "+ing.name.name if ing.alignment>=0 else "- "+ing.name.name
             ing_print.append(list_item)
-        # print(ing_print) # debug
         s = ch.DOUBLE_LEFT_TOP+ch.DOUBLE_HORIZ_PIPE*7+ch.DOUBLE_RIGHT_TOP+"\n"+ch.DOUBLE_VERTI_PIPE+" "*3+\
             color.PURPLE+iconmap[self.craft_type]+color.END+" "*3+ch.DOUBLE_T_LEFT+ch.DOUBLE_HORIZ_PIPE*2+ch.DOUBLE_RIGHT_TOP+" "
         s+= "+ " if self.alignment>=0 else "- "
-        # s+= color.BOLD+color.DARKCYAN+self.text+color.END+" ({:.2f})\n".format(self.alignment)
-        s+= color.BOLD+color.DARKCYAN+self.text+color.END+"\n"
+        #s+= color.BOLD+color.DARKCYAN+self.text+color.END+" ({:.2f})\n".format(self.alignment) # uncomment to display alignment
+        s+= color.BOLD+color.DARKCYAN+self.text+color.END+"\n"                                  # comment to display alignment
         s+= "╚╦══════╝  ║ "+color.RED+self.subtext+color.END+"\n"
         s+= " ║         ╚══════════════╗ \n"
         s+= " ║  {0}STR:{1} {2}{3}{4}CHA:{5} {6}{7}║\n".format(
