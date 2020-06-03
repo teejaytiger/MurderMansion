@@ -42,19 +42,14 @@ The crafting system uses a set of ingredients, scattered all over the mansion in
     BATTERY         CIRCUIT         ICEBERGLETTUCE  
     TOMATO          CROUTONS        OLIVEOIL    
 
-> Crafts are defined in `craft_engine.py` and uses the enumerated ingredients listed in `_abstr` to create requirements for spells, traps, weapons, and tools.  
-
-> Check out [this link](https://github.com/teejaytiger/MurderMansion/blob/master/craft_engine.py) to see some examples of crafts and spells I've already put in the game!  
-
-> You can also see an updated ingredients list in [this file](https://github.com/teejaytiger/MurderMansion/blob/master/_abstr.py) starting at line #120
+> Crafts are defined in `craft_engine` class and uses the enumerated ingredients listed in `_abstr` to create requirements for spells, traps, weapons, and tools.  
+> Check out [this link](https://github.com/teejaytiger/MurderMansion/blob/884054e9763ea0462e044b468d2547a37c3c42b7/_abstr.py#L406) to see some examples of crafts and spells I've already put in the game!  
+> You can also see an updated ingredients list in [this file](https://github.com/teejaytiger/MurderMansion/blob/884054e9763ea0462e044b468d2547a37c3c42b7/_abstr.py#L172)
 
 Here is an example spell:  
 
-    "WISHFORHELP":("Wish for help", 
-    "Wish someone would show up to help", [
-        ing.CATWHISKER, 
-        ing.YELLOWTEALIGHT, 
-        ing.MATCHSTICK])
+![example spell](https://raw.githubusercontent.com/teejaytiger/MurderMansion/master/images/spell_example.PNG)
+>+/- denotes the blessed/cursed value (`_craft().alignment`), which affects the quality of the craft. Craft quality is dependent on the quality of the ingredients. Taking advantage of this mechanic can help the player to craft powerful items. Alignments of ingredients are rolled on room construction. 
 
 Spells are enumerated in the `SPELLS` class, traps in `TRAPS`, and so on.
 
