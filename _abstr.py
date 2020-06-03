@@ -28,6 +28,19 @@ class _abstr (ABC):
         """
         self.alignment = 0.0 ## any curse or bless effects normalized -1 to 1
 
+class color:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+    # print(color.BOLD + 'Hello World !' + color.END)
+
 class item_type(Enum):
     BOOK = 0
     WEAPON = 1
@@ -606,6 +619,7 @@ class craft_engine:
                 ingredient_name.WOODBLOCK]),
         }
 
+    """
         # specials need to be initalized by the game engine as items and mapped to their enums
         self.special = {
             "type":item_type.SPECIAL,
@@ -619,6 +633,7 @@ class craft_engine:
                 SPECIAL.SUCTIONCUPDILDO,
             ])
         }
+    """
         
 
 if __name__ == "__main__":

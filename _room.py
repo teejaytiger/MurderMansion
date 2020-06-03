@@ -38,6 +38,14 @@ class room:
         }[self.room_type]
         self.furnish()
 
+    def __str__(self):
+        s = "This is a {}\n".format(self.room_type.name)
+        for container, items in self.containers.items():
+            s+="container: {0}\n".format(container.name)
+            for item in items:
+                s+=item.__str__()+"\n"
+        return s
+
 
     def furnish(self):
         """Populates a room with furniture and ingredients"""
@@ -53,7 +61,7 @@ class room:
             ## populate with ingredients
             # number of ingredients in container
             for i in range(0, random.choice([0]*20+[1]*30+[2]*30+[3]*10+[4]*8+[5]*2)+1):
-                items.append(INGREDIENT(compute().RANDOMIZE_INGREDIENT_NAME()))
+                items.append(INGREDIENT())
         if random.choice([True]*3+[False]*7): self.book = BOOK()
         if random.choice([True]*4+[False]*6): self.light = LIGHT()
         if random.choice([True]*1+[False]*9): self.altar = ALTAR()
@@ -70,12 +78,7 @@ class room:
 
 if __name__ == "__main__":
     r = room()
-    print("This is a {}".format(r.room_type.name))
-    for container, items in r.containers.items():
-        print("container: {0}".format(container.name))
-        for item in items:
-            print(item)
-        print("\n")
+    print(r)
     print("SPECIALS")
     if r.book: print(r.book) 
     else: print("No books")

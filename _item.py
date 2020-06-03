@@ -4,7 +4,7 @@ import sys
 import random
 import datetime, pytz
 from enum import IntEnum
-from _abstr import _abstr, compute, ingredient_name, chars as ch, item_type, durability, rarity, craft_engine
+from _abstr import _abstr, compute, ingredient_name, chars as ch, item_type, durability, rarity, craft_engine, color
 
 
 """
@@ -49,26 +49,39 @@ class _item (_abstr):
         return ceil(fac + self.alignment*fac)
 
 class _craft(_abstr):
-    def __init__(self, item_t=item_type.UNSET):
-        self.craft_type = item_t
-        self.craft_name = item_t
+    def __init__(self,
+    craft_type = None,
+    craft_name = None,
+    effect_funcs = [],
+    quantity = ""):
+        self.modifiers = {}
+        choices = [f for k,f in craft_engine().__dict__.items()]
+        self.craft_type = craft_type if craft_type else random.choice(choices) # returns a dictionary
+        choices = [k for k in self.craft_type if type(k)!=type("")]
+        self.craft_name = random.choice(choices) if not craft_name else craft_name
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.modifiers = { # set by the game engine
-            "str":None, ## Struggle - Modifies chance of escaping conflict and performing successful close up attacks and defenses
-            "pct":None, ## Perception - Modified chance of identifying hard to see objects or objects that may be of value
-            "lck":None, ## Luck - Modifies the chance of getting rare items and performing spells and critical hits, affected by alignment
-            "cha":None, ## Charisma - Improves difficulty modifier of certain dialogue actions
-            "int":None, ## Intelligence - Improves crafting and spellcasting ability
-            "hps":70    ## character hit points, recovered with spells, decreased with spells and attacks, 0 is dead, no max
-        }
-        self.effect_funcs = [] # set by the game engine
-        self.ingredients = [] # populated by the craft engine
-        self.badge = ""
-        self.quantity = ""
-        self.text = ""
-        self.subtext = ""
+        self.effect_funcs = effect_funcs
+        self.text, self.subtext, modifiers, inglist = self.craft_type[self.craft_name]
+        self.craft_type = self.craft_type["type"]
+        self.modifiers["str"] = modifiers[0]
+        self.modifiers["pct"] = modifiers[1]
+        self.modifiers["lck"] = modifiers[2]
+        self.modifiers["cha"] = modifiers[3]
+        self.modifiers["int"] = modifiers[4]
+        self.modifiers["hps"] = modifiers[5]
+        self.ingredients = []
+        for ing in inglist:
+            randomized = INGREDIENT()
+            randomized.name = ing
+            self.ingredients.append(randomized)
+        self.badge = "badge"
+        self.quantity = quantity
+
+        self.score = 0
+        self.alignment = 0.0
         self.compute_alignment()
-        self.name = ""
+        self.compute_score()
+        self.name = self.craft_name.name
     def __str__(self): 
         iconmap = {
             item_type.WEAPON:ch.WEAPON_ICON,
@@ -78,23 +91,32 @@ class _craft(_abstr):
             item_type.UNSET:ch.UNSET_ICON}
         wid = max([len(ing.name.name) for ing in self.ingredients])+2
         ing_print = []
+        list_item = ""
         for ing in self.ingredients:
-            ing_print.append("+ "+ing.name.name) if self.alignment>=0 else ing_print.append("- "+ing.name.name)
+            list_item = "+ "+ing.name.name if ing.alignment>=0 else "- "+ing.name.name
+            ing_print.append(list_item)
         # print(ing_print) # debug
         s = "╔═══════╗\n"+"║   "+\
-            iconmap[self.craft_type]+"   ╠══╗ "
+            color.PURPLE+iconmap[self.craft_type]+color.END+"   ╠══╗ "
         s+= "+ " if self.alignment>=0 else "- "
-        s+= self.text+"\n"
-        s+= "╚╦══════╝  ║ "+self.subtext+"\n"
-        s+= " ║         ╚══════════════╗ {}\n".format(self.badge)
-        s+= " ║  STR: {}{}CHA: {}{}║\n".format(
+        # s+= color.BOLD+color.DARKCYAN+self.text+color.END+" ({:.2f})\n".format(self.alignment)
+        s+= color.BOLD+color.DARKCYAN+self.text+color.END+"\n"
+        s+= "╚╦══════╝  ║ "+color.RED+self.subtext+color.END+"\n"
+        s+= " ║         ╚══════════════╗ \n"
+        s+= " ║  {0}STR:{1} {2}{3}{4}CHA:{5} {6}{7}║\n".format(
+            color.PURPLE, color.END,
             self.modifiers["str"]," "*(6-len(str(self.modifiers["str"]))), 
+            color.PURPLE, color.END,
             self.modifiers["cha"]," "*(6-len(str(self.modifiers["cha"]))))
-        s+= " ║  PCT: {}{}INT: {}{}║ {}\n".format(
+        s+= " ║  {0}PCT:{1} {2}{3}{4}INT:{5} {6}{7}║ {8}{9}{10}\n".format(
+            color.PURPLE, color.END,
             self.modifiers["pct"]," "*(6-len(str(self.modifiers["pct"]))), 
-            self.modifiers["int"]," "*(6-len(str(self.modifiers["int"]))), self.badge)
-        s+= " ║  LCK: {}{}HPS: {}{}╔══╩{}\n".format(
+            color.PURPLE, color.END,
+            self.modifiers["int"]," "*(6-len(str(self.modifiers["int"]))), color.YELLOW, self.badge, color.END)
+        s+= " ║  {0}LCK:{1} {2}{3}{4}HPS:{5} {6}{7}╔══╩{8}\n".format(
+            color.PURPLE, color.END,
             self.modifiers["lck"]," "*(6-len(str(self.modifiers["lck"]))), 
+            color.PURPLE, color.END,
             self.modifiers["hps"]," "*(3-len(str(self.modifiers["hps"]))),
             "═"*wid+"╗")
         ing = ing_print.pop()
@@ -103,7 +125,6 @@ class _craft(_abstr):
             ing = ing_print.pop()
             s+= "                       ║ "+ing+" "*(wid+2-len(ing))+"║\n"
         s+="                       ╚═══"+"═"*wid+"╝"
-            
         return s
 
     def compute_alignment(self):
@@ -119,21 +140,6 @@ class _craft(_abstr):
         if self.ingredients: self.score = total/len(self.ingredients)
     def compute_damage(self):
         return self.score*ceil((self.alignment+self.score)//2+(self.rarity.value+1))
-    def randomize(self):
-        self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
-        self.compute_alignment()
-        self.modifiers = { # set by the game engine
-            "str":random.randrange(-1, 2), ## Struggle - Modifies chance of escaping conflict and performing successful close up attacks and defenses
-            "pct":random.randrange(-1, 2), ## Perception - Modified chance of identifying hard to see objects or objects that may be of value
-            "lck":random.randrange(-1, 2), ## Luck - Modifies the chance of getting rare items and performing spells and critical hits, affected by alignment
-            "cha":random.randrange(-1, 2), ## Charisma - Improves difficulty modifier of certain dialogue actions
-            "int":random.randrange(-1, 2), ## Intelligence - Improves crafting and spellcasting ability
-            "hps":random.randrange(-1, 2)    ## character hit points, recovered with spells, decreased with spells and attacks, 0 is dead, no max
-        }
-        for i in range(0, random.randrange(2, 5)):
-            self.ingredients.append(INGREDIENT())
-        self.badge = ""
-        self.quantity = 0
 
 
 class BOOK (_item):
