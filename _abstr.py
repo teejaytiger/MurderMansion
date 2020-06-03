@@ -170,7 +170,7 @@ class available(Enum):
     UNAVAILABLE = 0 
 
 class ingredient_name(Enum):
-    """Ingredients are the primary mechanism in crafting . Crafting trees can be found in craf_engine.py"""
+    """Ingredients are the primary mechanism in crafting"""
     ## predominantly spells
     CATWHISKER = 0      # 
     MUGWORT = 1         # 
