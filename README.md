@@ -49,7 +49,7 @@ The crafting system uses a set of ingredients, scattered all over the mansion in
 Here is an example spell:  
 
 ![example spell](https://raw.githubusercontent.com/teejaytiger/MurderMansion/master/images/spell_example.PNG)
->+/- denotes the blessed/cursed value (`_craft().alignment`), which affects the quality of the craft. Craft quality is dependent on the quality of the ingredients. Taking advantage of this mechanic can help the player to craft powerful items. Alignments of ingredients are rolled on room construction. 
+>+/- denotes the blessed/cursed value (`_craft().alignment`), which affects the quality of the craft. Craft quality is dependent on the quality of the ingredients. Taking advantage of this mechanic can help the player to craft powerful items. Alignments of ingredients are rolled on room construction. Badges aren't implemented, but will give useful information in the context of the item (e.g. trap and weapon badges will show damage, books with show reading time, etc)
 
 Spells are enumerated in the `SPELLS` class, traps in `TRAPS`, and so on.
 
