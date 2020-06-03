@@ -82,7 +82,7 @@ class _craft(_abstr):
         self.compute_alignment()
         self.compute_score()
         self.name = self.craft_name.name
-    def __str__(self): 
+    def __str__(self): #TODO fix the explicit pipe characters
         iconmap = {
             item_type.WEAPON:ch.WEAPON_ICON,
             item_type.SPELL:ch.SPELL_ICON,
@@ -96,8 +96,8 @@ class _craft(_abstr):
             list_item = "+ "+ing.name.name if ing.alignment>=0 else "- "+ing.name.name
             ing_print.append(list_item)
         # print(ing_print) # debug
-        s = "╔═══════╗\n"+"║   "+\
-            color.PURPLE+iconmap[self.craft_type]+color.END+"   ╠══╗ "
+        s = ch.DOUBLE_LEFT_TOP+ch.DOUBLE_HORIZ_PIPE*7+ch.DOUBLE_RIGHT_TOP+"\n"+ch.DOUBLE_VERTI_PIPE+" "*3+\
+            color.PURPLE+iconmap[self.craft_type]+color.END+" "*3+ch.DOUBLE_T_LEFT+ch.DOUBLE_HORIZ_PIPE*2+ch.DOUBLE_RIGHT_TOP+" "
         s+= "+ " if self.alignment>=0 else "- "
         # s+= color.BOLD+color.DARKCYAN+self.text+color.END+" ({:.2f})\n".format(self.alignment)
         s+= color.BOLD+color.DARKCYAN+self.text+color.END+"\n"
