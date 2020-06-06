@@ -1,5 +1,5 @@
 from _item import BOOK, LIGHT, ALTAR, INGREDIENT, _craft
-from _abstr import craft_engine, item_type, chars as ch, WEAPONS, TOOLS, TRAPS, SPELLS
+from _abstr import craft_engine, item_type, chars as ch, WEAPONS, TOOLS, TRAPS, SPELLS, SPECIAL
 from _room import DOOR, room
 import random
 
@@ -15,13 +15,13 @@ class MurderMansion:
     quantity = ""):
         return _craft(craft_type,craft_name,effect_funcs, quantity)
 
-    
-
 if __name__ == "__main__":
     m = MurderMansion()
-    print(m.RANDOMIZE_CRAFT())
-    print(m.RANDOMIZE_CRAFT(craft_type=craft_engine().spells))
-    print(m.RANDOMIZE_CRAFT(craft_type=craft_engine().tools))
-    print(m.RANDOMIZE_CRAFT(craft_type=craft_engine().traps))
-    print(m.RANDOMIZE_CRAFT(craft_type=craft_engine().weapons))
-    print(m.RANDOMIZE_CRAFT(craft_type=craft_engine().weapons, craft_name=WEAPONS.THEGREY))
+    for i in range(0, 4):
+        print(_craft(craft_type=craft_engine().spells))
+    print(_craft(craft_type=craft_engine().tools))
+    print(_craft(craft_type=craft_engine().traps))
+    print(_craft(craft_type=craft_engine().weapons))
+
+    #print(_craft(craft_type=craft_engine().spells, craft_name=SPELLS.SMOKEBRINGER))
+    #print(_craft(craft_type=craft_engine().special, craft_name=SPECIAL.SUCTIONCUPDILDO))

@@ -50,7 +50,8 @@ class item_type(Enum):
     TRAP = 5
     TOOL = 6
     SPECIAL = 7
-    UNSET = 8
+    INGREDIENT = 8
+    UNSET = 9
 
 class chars:
     DOUBLE_LEFT_TOP = u'\u2554' # ╔ 
@@ -79,10 +80,13 @@ class chars:
     INGREDIENT_ICON = chr(9630)
     TOOL_ICON = chr(9655)
     UNSET_ICON = chr(9711)
+    EMPTY_STAR = chr(9734) # ☆
+    FULL_STAR = chr(9733) # ★
     
 
 class size(Enum):
     """Enumeration of all item sizes (except lamps)"""
+    # MUST BE KEPT IN SIZE ORDER, ENUM USED IN CALCULATIONS
     TINY = 0        ## weight 0
     SMALL = 1       ## weight 1
     MEDUIM = 2      ## etc
@@ -244,6 +248,10 @@ class ingredient_name(Enum):
     AVETTBROTHERSCD=204 # 1
     VPDHAT = 205        # 1
     COFFEE = 206        # 1
+    # weed
+    OREGANO = 300       # 1
+    # special 
+    SPECIAL = 400
 
 class SPELLS(Enum):
     """Spells have consumption time"""
@@ -254,6 +262,7 @@ class SPELLS(Enum):
     HEALINGMIDDLE = 4
     FLIGHT = 5
     FIGHT = 6
+    SMOKEBRINGER = 7
 
 class TRAPS(Enum):
     """Traps have setup time"""
@@ -311,14 +320,15 @@ class TOOLS(Enum):
     JIMSHAPIRO = 5
 
 class ACTION(Enum):
+    # must be implemented by the top level
     STARTTRADE = 0
     FUCK = 1
     MURDER = 2
     GETFREETRAP = 10
     GETFREETOOL = 11 
     GETFREESPELL = 12 # gifts crafted spell
-    GETFREECRAFT = 13 # unlocks acraft
-    GETFREEMAGIC = 14  # unlocks a spell
+    GETFREECRAFTLEVEL = 13 # unlocks a craft level
+    GETFREESPELLLEVEL = 14  # unlocks a spell level
     GETFREEITEM = 15 # gifts a completed craft
     GETFREEING = 16 # gifts a free ingredient
     GETFREEWEAPON = 15
@@ -329,7 +339,14 @@ class ACTION(Enum):
     INCREASELCK = 23
     INCREASEPCT = 24
     # Specific Character Actions
-    GIVESANTAGIFT = 100 # 
+    SANTAEFFECT = 100 #
+    DILDOEFFECT = 101
+    MARCUSEFFECT = 102 
+    # Specific functions for jokes
+    GIVESASH = 200
+    # MECHANIC FUNCTIONS
+    SUPPRESSAMBUSHALL = 300 # all doors don't spawn murderer
+
 
 class compute:
     """Class defines how items and attributes are randomized in game. Also creates scores and computes affect."""
@@ -405,16 +422,18 @@ class compute:
 
 class craft_engine:
     def __init__(self):
-        self.spells = {
+        self.spells = { # CONSUMABLE
             "type":item_type.SPELL,
             # [str, pct, lck, cha, int, hps]
             SPELLS.WISHFORHELP:("Wish for help", 
-            "Wish someone would show up to help", [0, 0, .5, .1, 0, 0], [
+            "Wish someone would show up to help", [0, 0, .5, .1, 0, 0], 
+                [], [
                 ingredient_name.CATWHISKER, 
                 ingredient_name.YELLOWTEALIGHT, 
                 ingredient_name.MATCHSTICK]),
             SPELLS.HOUSESALAD:("House Salad", 
-            "This is the super salad. Grants 70 health points", [0, 0, 0, 0, 0, 70], [
+            "This is the super salad. Grants 70 health points", [0, 0, 0, 0, 0, 70], 
+                [], [
                 ingredient_name.SCISSORHALVE, 
                 ingredient_name.ICEBERGLETTUCE, 
                 ingredient_name.TOMATO, 
@@ -422,16 +441,19 @@ class craft_engine:
                 ingredient_name.OLIVEOIL, 
                 ingredient_name.VINEGAR]),
             SPELLS.HEALINGMINOR:("Griffin Potion",
-            "Your sweet baby healing potion. Grants 10 health points", [0, 0, 0, 0, 0, 10], [
+            "Your sweet baby healing potion. Grants 10 health points", [0, 0, 0, 0, 0, 10], 
+                [], [
                 ingredient_name.BOTTLE,
                 ingredient_name.MOONWATER]),
             SPELLS.HEALINGMIDDLE:("Travis Potion",
-            "Your middlest healing potion. Grants 30 health points", [0, 0, 0, 0, 0, 30], [
+            "Your middlest healing potion. Grants 30 health points", [0, 0, 0, 0, 0, 30], 
+                [], [
                 ingredient_name.BOTTLE,
                 ingredient_name.QUARTZ,
                 ingredient_name.MOONWATER]),
             SPELLS.HEALINGMAX:("Justin Potion", 
-            "Your oldest healing potion. Grants 50 health points", [0, 0, 0, 0, 0, 50], [
+            "Your oldest healing potion. Grants 50 health points", [0, 0, 0, 0, 0, 50], 
+                [], [
                 ingredient_name.BOTTLE,
                 ingredient_name.ROSEMARY, 
                 ingredient_name.QUARTZ, 
@@ -439,83 +461,103 @@ class craft_engine:
                 ingredient_name.MOONWATER, 
                 ingredient_name.MATCHSTICK]),
             SPELLS.FLIGHT:("Flight",
-            "The parasypathetic nervous system reacts...", [50, 0, 0, 0, 0, 0], [
+            "The parasypathetic nervous system reacts...", [0, 0, 0, 0, 0, 0], 
+                [ACTION.SUPPRESSAMBUSHALL], [
                 ingredient_name.REISHIMUSHROOM,
                 ingredient_name.MOONWATER,
                 ingredient_name.ROSEMARY,
                 ingredient_name.BOTTLE]),
             SPELLS.FIGHT:("Fight",
-            "...and you're in fight or flight mode", [50, 0, 0, 0, 0, 0], [
+            "...and you're in fight or flight mode", [0, 0, 0, 0, 0, 0], 
+                [ACTION.SUPPRESSAMBUSHALL], [
                 ingredient_name.BOTTLE,
                 ingredient_name.BLACKWIDOW,
                 ingredient_name.OLEANDER,
                 ingredient_name.NIGHTSHADE]),
+            SPELLS.SMOKEBRINGER:("Smoke Bringer",
+            "For the night is dank and full of flowers", [0, 0, 0, 0, -1, 0], 
+                [ACTION.GIVESASH, ACTION.SUPPRESSAMBUSHALL], [ # add ash to inventory after this is used
+                ingredient_name.OREGANO,
+                ingredient_name.PAPER,
+                ingredient_name.MATCHSTICK])
         }
 
-        self.traps = {
+        self.traps = { # CONSUMABLE
             "type":item_type.TRAP,
             TRAPS.FRONTTOWARDSENEMY: ("Front Towards Enemy", # level 1
-            "I regret nothing. The end.", [3, 0, 0, 0, 0, 0], [
+            "I regret nothing. The end.", [3, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.SHOTGUNSHELL, 
                 ingredient_name.PIPE, 
                 ingredient_name.NAIL, 
                 ingredient_name.STRING, 
                 ingredient_name.SPRING]),
             TRAPS.HOMEALONE: ("Home Alone", # level 1
-            "Keep the change, ya filthy animal", [1, 0, 0, 0, 0, 0], [
+            "Keep the change, ya filthy animal", [1, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.STRING, 
                 ingredient_name.PAINTCAN]),
             TRAPS.SNAILPROBLEM: ("Snail Problem", # level 1
-            "For problems out in the garden. Stuns enemies", [1, 0, 0, 0, 0, 0], [
+            "For problems out in the garden. Stuns enemies", [1, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.GLASSSHARD, 
                 ingredient_name.SALT]),
             TRAPS.BANGBANGBANG: ("Bang Bang Bang", # level 1
-            "All smoke, no sizzle. Stuns enemies", [0, 0, 0, 0, 0, 0], [
+            "All smoke, no sizzle. Stuns enemies", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.FLASHBULB, 
                 ingredient_name.SMALLBOX, 
                 ingredient_name.STRING,
                 ingredient_name.BATTERY]),
             TRAPS.SPILTLEGOS: ("Spilt Legos", # level 2
-            "RIP Feet", [0, 0, 0, 0, 0, 0], [
+            "RIP Feet", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.PLASTIC,
                 TRAPS.SNAILPROBLEM]),
             TRAPS.AUTOSTUBBER: ("The Autostubber", # level 1
-            "I hope you're wearing steeltoed boots...", [0, 0, 0, 0, 0, 0], [
+            "I hope you're wearing steeltoed boots...", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.WOODBLOCK,
                 ingredient_name.SPRING,
                 ingredient_name.STRING]),
             TRAPS.THETOEANNIHILATOR: ("The Toe Annihilator", # level 2
-            "Yeah, you read that right", [0, 0, 0, 0, 0, 0], [
+            "Yeah, you read that right", [0, 0, 0, 0, 0, 0], 
+                [], [
                 TRAPS.AUTOSTUBBER,
                 ingredient_name.NAIL,
                 ingredient_name.SCISSORHALVE]),
             TRAPS.STUBTOSTUB: ("Stub to Stub", # level 3
-            "Ashes to Ashes...", [0, 0, 0, 0, 0, 0], [
+            "Ashes to Ashes...", [0, 0, 0, 0, 1, 0], 
+                [ACTION.GIVESASH], [
                 TRAPS.THETOEANNIHILATOR,
                 ingredient_name.SCREWS,
                 ingredient_name.SCISSORHALVE])
         }
 
-        self.weapons = {
+        self.weapons = { # MAX NUM USES
             "type":item_type.WEAPON,
             WEAPONS.DADDYSLITTLEMONSTER: ("Daddy's Little Monster", # level 1
-            "It's nails on a stick, you get it", [0, 0, 0, 0, 0, 0], [
+            "It's nails on a stick, you get it", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.WOODENDOWEL, 
                 ingredient_name.NAIL]),
             WEAPONS.THEGREY: ("The Grey", 
-            "Don't worry about Mythbusters, this'll work", [0, 0, 0, 0, 0, 0], [ # level 1
+            "Don't worry about Mythbusters, this'll work", [0, 0, 0, 0, 0, 0], 
+                [], [ # level 1
                 ingredient_name.WOODENDOWEL, 
                 ingredient_name.NAIL, 
                 ingredient_name.DUCTTAPE, 
                 ingredient_name.SHOTGUNSHELL]),
             WEAPONS.TSHIRTCANNON: ("T-Shirt Cannon", # level 1
-            "But at close range", [0, 0, 0, 0, 0, 0], [
+            "But at close range", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.CLOTH,
                 ingredient_name.PIPE,
                 ingredient_name.SHOTGUNSHELL,
                 ingredient_name.SCISSORHALVE]),
             WEAPONS.TSHIRTSNIPER: ("T-Shirt Sniper", # level 2
-            "But at long range", [0, 0, 0, 0, 0, 0], [
+            "But at long range", [0, 0, 0, 0, 0, 0], 
+                [], [
                 WEAPONS.TSHIRTCANNON,
                 ingredient_name.CLOTH,
                 ingredient_name.PIPE,
@@ -523,40 +565,48 @@ class craft_engine:
                 ingredient_name.STEELWOOL,
                 ingredient_name.SHOTGUNSHELL]),
             WEAPONS.SOAPINASOCK: ("Soap In A Sock", # level 1
-            "Don't be a fuckin' narc", [0, 0, 0, 0, 0, 0], [
+            "Don't be a fuckin' narc", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.CLOTH,
                 ingredient_name.ROSEMARY,
                 ingredient_name.EPSOMSALT]),
             WEAPONS.SHARPPENCIL: ("Sharp Pencil", # level 1
-            "A FOOKING PEENCIL", [0, 0, 0, 0, 0, 0], [
+            "A FOOKING PEENCIL", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.SCISSORHALVE]),
             WEAPONS.POCKETSAND: ("Pocket Sand!",
-            "Are you attempting to get to know me?", [0, 0, 0, 0, 0, 0], [ # level 2
+            "Are you attempting to get to know me?", [0, 0, 0, 0, 0, 0], 
+                [], [ # level 2
                 ingredient_name.SALT,
                 ingredient_name.GLASSSHARD,
                 TOOLS.JIMSHAPIRO]),
             WEAPONS.ENTRYLEVEL: ("Entry Level", # level 1
-            "It's just a stick with duct tape, man.", [0, 0, 0, 0, 0, 0], [
+            "It's just a stick with duct tape, man.", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.DUCTTAPE]),
             WEAPONS.THECONSTABLE: ("The Constable", # level 2
-            "It's two sticks taped together", [0, 0, 0, 0, 0, 0], [
+            "It's two sticks taped together", [0, 0, 0, 0, 0, 0], 
+                [], [
                 WEAPONS.ENTRYLEVEL,
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.DUCTTAPE]),
             WEAPONS.FAGGOT: ("Faggot", # level 3
-            "It's a bundle of sticks, and also me.", [0, 0, 0, 0, 0, 0], [
+            "It's a bundle of sticks, and also me.", [0, 0, 0, 0, 0, 0], 
+                [], [
                 WEAPONS.THECONSTABLE,
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.DUCTTAPE]),
             WEAPONS.TEDDYSTICK: ("The Teddy Stick", # level 4
-            "Walk softly, motherfucker", [0, 0, 0, 0, 0, 0], [
+            "Walk softly, motherfucker", [0, 0, 0, 0, 2, 0], 
+                [], [
                 WEAPONS.FAGGOT,
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.DUCTTAPE]),
             WEAPONS.REALLYHOTPIZZA: ("Really Hot Pizza", # level 3
-            "RIP roof of the mouth", [0, 0, 0, 0, 0, 0], [
+            "RIP roof of the mouth", [0, 0, 0, 0, 1, 0], 
+                [], [
                 ingredient_name.FLOUR,
                 ingredient_name.ROSEMARY,
                 ingredient_name.SALT,
@@ -565,75 +615,80 @@ class craft_engine:
                 ingredient_name.REISHIMUSHROOM,
                 ingredient_name.OLIVEOIL]),
             WEAPONS.GARROTEFLOSS: ("Garrote Floss", # level 1
-            "and the toothbrush is the detonation device!", [0, 0, 0, 0, 0, 0], [
+            "and the toothbrush is the detonation device!", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.STRING,
                 ingredient_name.MINT]),
             WEAPONS.SPLINTERPLACER5K: ("Splinter Placer 5k", # level 4
-            "Brought to you by Zoom Care", [0, 0, 0, 0, 0, 0], [
+            "Brought to you by Zoom Care", [0, 0, 0, 0, 0, 0], 
+                [], [
                 WEAPONS.FAGGOT,
                 ingredient_name.GLASSSHARD]),
             WEAPONS.TOEKNIFE: ("Toe Knife", # level 2
-            "Now if only you had a shoe phone", [0, 0, 0, 0, 0, 0], [
+            "Now if only you had a shoe phone", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.SCISSORHALVE,
                 ingredient_name.SPRING,
                 ingredient_name.SCREWS]),
             WEAPONS.BROTORCH: ("Bro Torch", # level 2
-            "Bros before Not a Flamethrowers", [0, 0, 0, 0, 0, 0], [
+            "Bros before Not a Flamethrowers", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.STEELWOOL,
                 ingredient_name.PIPE,
                 ingredient_name.MATCHSTICK,
                 ingredient_name.OLIVEOIL]),
         }
 
-        self.tools = {
+        self.tools = { # MAX NUM USES
             "type":item_type.TOOL,
             TOOLS.RAVEON: ("Rave On!", # level 1
-            "You can't see them, but they can see you.", [0, 0, 0, 0, 0, 0], [
+            "You can't see them, but they can see you.", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.WOODENDOWEL, 
                 ingredient_name.GLOWSTICK, 
                 ingredient_name.DUCTTAPE]),
             TOOLS.MOLLYPOP: ("Mollypop", # level 1
-            "Not for those who suffer from epilepsy.", [0, 0, 0, 0, 0, 0], [
+            "Not for those who suffer from epilepsy.", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.FLASHBULB,
                 ingredient_name.SMALLBOX,
                 ingredient_name.BATTERY]),
             TOOLS.LIGHTBRINGER: ("Lightbringer", # level 2
-            "For the night is dark and full of terrors", [0, 0, 0, 0, 0, 0], [
+            "For the night is dark and full of terrors", [0, 0, 0, 0, 0, 0], 
+                [], [
                 TOOLS.MOLLYPOP,
                 ingredient_name.FLASHBULB,
                 ingredient_name.CIRCUIT,
                 ingredient_name.BATTERY]),
             TOOLS.LOCKPICKINGLAWYER:("The Lockpicking Laywer", # level 1
-            "This is The Lockpicking Laywer, and today I have something special", [0, 0, 0, 0, 0, 0], [
+            "This is The Lockpicking Laywer, and today I have something special", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.COPPERWIRE,
                 ingredient_name.NAIL]),
             TOOLS.BOSNIANTOOL:("BosnianBill", # level 2
-            "We're just gonna use the tool that BosnianBill and I made", [0, 0, 0, 0, 0, 0], [
+            "We're just gonna use the tool that BosnianBill and I made", [0, 0, 0, 0, 0, 0], 
+                [], [
                 TOOLS.LOCKPICKINGLAWYER,
                 ingredient_name.PIPE,
                 ingredient_name.SPRING]),
             TOOLS.JIMSHAPIRO: ("Jim Shapiro", # level 1
-            "Every single penny", [0, 0, 0, 0, 0, 0], [
+            "Every single penny", [0, 0, 0, 0, 0, 0], 
+                [], [
                 ingredient_name.STRING,
                 ingredient_name.WOODENDOWEL,
                 ingredient_name.WOODBLOCK]),
         }
-
-    """
+    
         # specials need to be initalized by the game engine as items and mapped to their enums
         self.special = {
             "type":item_type.SPECIAL,
-            SPECIAL.THEGIFTER:("The Gifter","Cindy Lou sends her best...", [0, 0, 0, 0, 0, 0], [ # Trap, probaby cookies and milk based
-                SPECIAL.THEGIFTER,
-            ]),
-            SPECIAL.MARCUSMUNITIONS:("Marcus Munitions","What, you don't like money?", [0, 0, 0, 0, 0, 0], [ # One shot gun
-                SPECIAL.MARCUSMUNITIONS,
-            ]),
-            SPECIAL.SUCTIONCUPDILDO: ("Suction Cup Dildo", "Why was this in the laundry?", [0, 0, 0, 0, 0, 0], [ # WEAPON, causes embarrassment
-                SPECIAL.SUCTIONCUPDILDO,
-            ])
+            SPECIAL.THEGIFTER:("The Gifter","Cindy Lou sends her best...", [0, 0, 0, 0, 0, 0], 
+                [ACTION.SANTAEFFECT], [ingredient_name.SPECIAL] ),
+            SPECIAL.MARCUSMUNITIONS:("Marcus Munitions","What, you don't like money?", [0, 0, 0, 0, 0, 0],
+                [ACTION.MARCUSEFFECT], [ingredient_name.SPECIAL] ),
+            SPECIAL.SUCTIONCUPDILDO: ("Suction Cup Dildo", "Made from 100% medical-grade embarrassment", [0, 0, 0, -1, 0, 0],
+                [ACTION.DILDOEFFECT], [ingredient_name.SPECIAL] ),
         }
-    """
         
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import sys
 import random
 import datetime, pytz
 from enum import IntEnum
-from _abstr import _abstr, compute, ingredient_name, chars as ch, item_type, durability, rarity, craft_engine, color
+from _abstr import _abstr, compute, ingredient_name, chars as ch, item_type, durability, rarity, craft_engine, color, size
 
 
 """
@@ -52,16 +52,19 @@ class _craft(_abstr):
     def __init__(self,
     craft_type = None,
     craft_name = None,
+    size = size.MEDUIM,
     effect_funcs = [],
     quantity = ""):
+        self.size = size
         self.modifiers = {}
+        self.functions = []
         choices = [f for k,f in craft_engine().__dict__.items()]
         self.craft_type = craft_type if craft_type else random.choice(choices) # returns a dictionary
         choices = [k for k in self.craft_type if type(k)!=type("")]
         self.craft_name = random.choice(choices) if not craft_name else craft_name
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.effect_funcs = effect_funcs
-        self.text, self.subtext, modifiers, inglist = self.craft_type[self.craft_name]
+        self.text, self.subtext, modifiers, self.functions, inglist = self.craft_type[self.craft_name]
         self.craft_type = self.craft_type["type"]
         self.modifiers["str"] = modifiers[0]
         self.modifiers["pct"] = modifiers[1]
@@ -85,10 +88,12 @@ class _craft(_abstr):
     def __str__(self): #TODO fix the explicit pipe characters
         iconmap = {
             item_type.WEAPON:ch.WEAPON_ICON,
+            item_type.INGREDIENT:ch.CRAFT_ICON,
             item_type.SPELL:ch.SPELL_ICON,
             item_type.TOOL:ch.TOOL_ICON,
             item_type.TRAP:ch.TRAP_ICON,
-            item_type.UNSET:ch.UNSET_ICON}
+            item_type.UNSET:ch.UNSET_ICON,
+            item_type.SPECIAL:ch.FULL_STAR}
         wid = max([len(ing.name.name) for ing in self.ingredients])+2
         ing_print = []
         list_item = ""
@@ -140,13 +145,13 @@ class _craft(_abstr):
     def compute_damage(self):
         return self.score*ceil((self.alignment+self.score)//2+(self.rarity.value+1))
 
-
 class BOOK (_item):
     """
     Increses int when read. Bigger books take longer to read, but grant higher int
     Small books perform a special character buff (new spell, new craft, etc)
     """
     def __init__(self):
+        self.craft_type = item_type.BOOK
         self.modifiers = {}
         self.score = 0
         self.size = compute().RANDOMIZE_SIZE_BOOK()
@@ -168,6 +173,7 @@ class LIGHT (_item):
     Lamp size affects reading speed. 
     """
     def __init__(self):
+        self.craft_type = item_type.LIGHT
         self.modifiers = {}
         self.score = 0
         self.size = compute().RANDOMIZE_SIZE_LAMP()
@@ -188,6 +194,7 @@ class ALTAR (_item):
     Has a max number of uses based on durability
     """
     def __init__(self):
+        self.craft_type = item_type.ALTAR
         self.modifiers = {}
         self.score = 0
         self.size = compute().RANDOMIZE_SIZE_ALTAR()
@@ -207,6 +214,7 @@ class INGREDIENT(_item):
     Used in spellcasting and weapon crafting
     """
     def __init__(self):
+        self.craft_type = item_type.INGREDIENT
         self.modifiers = {}
         self.size = compute().RANDOMIZE_SIZE_INGREDIENT()
         self.durability = compute().RANDOMIZE_DURABILITY()
