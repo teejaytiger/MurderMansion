@@ -42,6 +42,9 @@ class inventory:
     def show_subinv(self, type):
         print(self.categorize()[type])
 
+    def has_altar(self):
+        return True if self.altars.items else False
+
     def __str__(self):
         s = ""
         s+= "\n"+self.books.__str__()

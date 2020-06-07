@@ -209,6 +209,7 @@ class ingredient_name(Enum):
     ASH = 30            # Elisabeth
     BOTTLE = 31         # common item
     FLOUR = 32          # 
+    HONEY = 33          # 
     ## predominantly crafts
     MATCHSTICK = 51     # 
     PIPE = 52           # 
@@ -263,6 +264,11 @@ class SPELLS(Enum):
     FLIGHT = 5
     FIGHT = 6
     SMOKEBRINGER = 7
+    INTROSPECTION = 8
+    DUPLICATION = 9
+    PROTECTION = 10
+    PROTECTION2 = 11
+    PROTECTION3 = 12
 
 class TRAPS(Enum):
     """Traps have setup time"""
@@ -274,6 +280,7 @@ class TRAPS(Enum):
     AUTOSTUBBER = 5
     THETOEANNIHILATOR = 6
     STUBTOSTUB = 7
+    HONEYPOT = 8
 
 class SPECIAL(Enum):
     """Weapons have a maximum number of uses"""
@@ -344,8 +351,13 @@ class ACTION(Enum):
     MARCUSEFFECT = 102 
     # Specific functions for jokes
     GIVESASH = 200
+    HONEYPOT = 201
     # MECHANIC FUNCTIONS
     SUPPRESSAMBUSHALL = 300 # all doors don't spawn murderer
+    STRUGGLE50 = 301
+    STRUGGLE25 = 302
+    STRUGGLE75 = 303
+    STRUGGLE100 = 304
 
 
 class compute:
@@ -479,7 +491,42 @@ class craft_engine:
                 [ACTION.GIVESASH, ACTION.SUPPRESSAMBUSHALL], [ # add ash to inventory after this is used
                 ingredient_name.OREGANO,
                 ingredient_name.PAPER,
-                ingredient_name.MATCHSTICK])
+                ingredient_name.MATCHSTICK]),
+            SPELLS.INTROSPECTION:("Introspection",
+            "Prah prah prow proud. I’m proud of Jay.", [0, 0, 0, 0, 0, 0],
+                [ACTION.STRUGGLE75], [
+                ingredient_name.GLASSSHARD,
+                ingredient_name.SILVER,
+                ingredient_name.YELLOWTEALIGHT,
+                ingredient_name.MATCHSTICK]),
+            SPELLS.DUPLICATION:("Duplication",
+            "So, lemme guess. You're the real Pinkie Pie.", [0, 0, 0, 0, 0, -10],
+                [ACTION.STRUGGLE100],[
+                SPELLS.INTROSPECTION,
+                ingredient_name.WOODENDOWEL,
+                ingredient_name.DEADFLESH]),
+            SPELLS.PROTECTION:( "Simple Protection Spell",
+            "I can be your hero, baybeh", [1, 0, 0, 0, 0, 0],
+                [ACTION.STRUGGLE25], [
+                ingredient_name.BOTTLE,
+                ingredient_name.LAVENDER,
+                ingredient_name.WHITESAGE,
+                ingredient_name.SALT,
+                ingredient_name.QUARTZ,
+                ingredient_name.ROSEPETALS]),
+            SPELLS.PROTECTION2:( "Stronger Protection Spell",
+            "I can be your hero, baybeh", [2, 0, 0, 0, 0, 0],
+                [ACTION.STRUGGLE50], [
+                ingredient_name.MOONWATER,
+                ingredient_name.ROSEPETALS,
+                ingredient_name.QUARTZ,
+                ingredient_name.SALT,
+                SPELLS.PROTECTION]),
+            SPELLS.PROTECTION3:( "Strongest Protection Spell",
+            "I can be your hero, baybeh", [3, 0, 0, 0, 0, 0],
+                [ACTION.STRUGGLE100], [
+                ingredient_name.ADDERSTONE,
+                SPELLS.PROTECTION2]),
         }
 
         self.traps = { # CONSUMABLE
@@ -531,7 +578,14 @@ class craft_engine:
                 [ACTION.GIVESASH], [
                 TRAPS.THETOEANNIHILATOR,
                 ingredient_name.SCREWS,
-                ingredient_name.SCISSORHALVE])
+                ingredient_name.SCISSORHALVE]),
+            TRAPS.HONEYPOT:("The Honeypot",
+            "I have ascertained the target, Sir. And he's actually quite handsome.", [0, 0, 0, 0, 0, 0],
+                [ACTION.STRUGGLE50], [
+                ingredient_name.HONEY,
+                ingredient_name.HONEYMUSTARD,
+                ingredient_name.BOTTLE,
+                ingredient_name.BOTTLECAP]),
         }
 
         self.weapons = { # MAX NUM USES

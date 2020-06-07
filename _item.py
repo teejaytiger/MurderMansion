@@ -213,7 +213,7 @@ class INGREDIENT(_item):
     """
     Used in spellcasting and weapon crafting
     """
-    def __init__(self):
+    def __init__(self, ing_name=compute().RANDOMIZE_INGREDIENT_NAME()):
         self.craft_type = item_type.INGREDIENT
         self.modifiers = {}
         self.size = compute().RANDOMIZE_SIZE_INGREDIENT()
@@ -222,7 +222,7 @@ class INGREDIENT(_item):
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
         self.score = super().get_uses()
-        self.name = compute().RANDOMIZE_INGREDIENT_NAME()
+        self.name = ing_name
         self.icon = ch.CRAFT_ICON
         self.badge = ""
         self.countdown = 1
