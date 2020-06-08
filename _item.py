@@ -54,7 +54,8 @@ class _craft(_abstr):
     craft_name = None,
     size = size.MEDUIM,
     effect_funcs = [],
-    quantity = ""):
+    quantity = "",
+    ingredients_list = []):
         self.size = size
         self.modifiers = {}
         self.functions = []
@@ -72,11 +73,21 @@ class _craft(_abstr):
         self.modifiers["cha"] = modifiers[3]
         self.modifiers["int"] = modifiers[4]
         self.modifiers["hps"] = modifiers[5]
-        self.ingredients = []
-        for ing in inglist:
-            randomized = INGREDIENT()
-            randomized.name = ing
-            self.ingredients.append(randomized)
+        self.ingredients = ingredients_list
+        if not ingredients_list:
+            for ing in inglist:
+                randomized = INGREDIENT()
+                randomized.name = ing
+                self.ingredients.append(randomized)
+        else:
+            try:
+                #print([x.name for x in ingredients_list])
+                #print([x for x in inglist])
+                assert all(x in [e.name for e in ingredients_list] for x in inglist) # just make sure everything is there
+
+            except:
+                print("there was a failure to validate the ingredients list in the craft assembly")
+
         self.badge = "badge"
         self.quantity = quantity
 
@@ -84,7 +95,8 @@ class _craft(_abstr):
         self.alignment = 0.0
         self.compute_alignment()
         self.compute_score()
-        self.name = self.craft_name.name
+        self.name = self.craft_name
+
     def __str__(self): #TODO fix the explicit pipe characters
         iconmap = {
             item_type.WEAPON:ch.WEAPON_ICON,

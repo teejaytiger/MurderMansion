@@ -17,14 +17,12 @@ class MurderMansion:
         return _craft(craft_type,craft_name,effect_funcs, quantity)
 
     def ingredients_by_spell(self, spell):
-        text, subtext, mods, acts, ings = craft_engine().spells[spell]
-        return [INGREDIENT(ing_name=ing) for ing in ings]
+        return [INGREDIENT(ing_name=ing) for ing in craft_engine().spells[spell][4]]
     def check_spell_prerequisites(self, spell):
-        text, subtext, mods, acts, ings = craft_engine().spells[spell]
-        if(all(x in self.char.inventory.ingredients.items for x in ings)):
-            return True
-        return False
-
+        return all(x in [e.name for e in self.char.inventory.ingredients.items+\
+                                        self.char.inventory.spells.items+\
+                                        self.char.inventory.tools.items+\
+                                        self.char.inventory.traps.items] for x in craft_engine().spells[spell][4])
 
 class specials:
     def __init__(self):
@@ -76,10 +74,6 @@ if __name__ == "__main__":
         m.char.inventory.put_away(ALTAR())
         for ingredient in m.ingredients_by_spell(SPELLS.PROTECTION):
             m.char.inventory.put_away(ingredient)
-        for ingredient in m.ingredients_by_spell(SPELLS.PROTECTION2):
-            m.char.inventory.put_away(ingredient)
-        for ingredient in m.ingredients_by_spell(SPELLS.PROTECTION3):
-            m.char.inventory.put_away(ingredient)
         # this causes the side effect of adding craft names as ingredients, they should be ignored or removed
         # test remove
         for ing in m.char.inventory.ingredients.items:
@@ -88,10 +82,43 @@ if __name__ == "__main__":
                 # throw away everything that isn't an ingredient
                 m.char.inventory.throw_away(ing)
         # now that everything is cleaned up, craft the spells!
-        if m.check_spell_prerequisites(SPELLS.PROTECTION):
-            print("Everything is here")
+        # hand the sublist of selected ingredients to the craft engine.
+        print("Items accounted for? {}".format( m.check_spell_prerequisites(SPELLS.PROTECTION) ))
+        prot = _craft(craft_type=craft_engine().spells, craft_name=SPELLS.PROTECTION, ingredients_list=m.char.inventory.ingredients.items)
+        # This is where you would remove the selected item subset, but we're not doing that here
+        # instead, we'll just blow away the whole list and replace it with the new subset
+        m.char.inventory.ingredients.items = [] # kabloosh now it's empty
+        m.char.inventory.spells.items = [] # kabloosh now it's empty
+        # next craft, now without any comments:
 
-        print(m.char.inventory)
+        for ingredient in m.ingredients_by_spell(SPELLS.PROTECTION2):
+            m.char.inventory.put_away(ingredient)
+        for ing in m.char.inventory.ingredients.items:
+            if not ing.name in [e for e in ingredient_name]:
+                m.char.inventory.throw_away(ing)
+        m.char.inventory.put_away(prot) # okay, one comment. This spell requires the craft we made before
+        print("Items accounted for? {}".format( m.check_spell_prerequisites(SPELLS.PROTECTION2) ))
+        prot2 = _craft(craft_type=craft_engine().spells, craft_name=SPELLS.PROTECTION2, ingredients_list=m.char.inventory.ingredients.items+m.char.inventory.spells.items)
+        m.char.inventory.ingredients.items = []
+        m.char.inventory.spells.items = []
+
+        # and 3
+        for ingredient in m.ingredients_by_spell(SPELLS.PROTECTION2):
+            m.char.inventory.put_away(ingredient)
+        for ing in m.char.inventory.ingredients.items:
+            if not ing.name in [e for e in ingredient_name]:
+                m.char.inventory.throw_away(ing)
+        m.char.inventory.put_away(prot2) # same thing as before
+        print("Items accounted for? {}".format( m.check_spell_prerequisites(SPELLS.PROTECTION3) ))
+        prot3 = _craft(craft_type=craft_engine().spells, craft_name=SPELLS.PROTECTION3, ingredients_list=m.char.inventory.ingredients.items+m.char.inventory.spells.items)
+
+        m.char.inventory.put_away(prot) # need to put this back in because we blew away the inventory containing it
+        m.char.inventory.put_away(prot3)
+
+        print(m.char.inventory) # should just contain the list from protection3, since I didn't blow that one away, and the three crafts
+        # the existence of protection2 proves it works
+
+        #let's try again, but with the wrong ingredients
 
 
     test2()
