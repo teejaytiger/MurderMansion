@@ -90,7 +90,6 @@ class _craft(_abstr):
 
         self.badge = "badge"
         self.quantity = quantity
-
         self.score = 0
         self.alignment = 0.0
         self.compute_alignment()
