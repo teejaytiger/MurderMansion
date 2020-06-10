@@ -23,12 +23,13 @@ def _find_getch():
     return _getch
 
 class struggle:
-    def __init__(self, time=10):
+    def __init__(self, char="s", time=10):
         self.time = time #s
         self.c = True
         self.getch = _find_getch()
         self.string = ""
         self.rate = 0
+        self.char = char
     def _timer(self):
         sleep(self.time)
         self.c = False
@@ -41,10 +42,11 @@ class struggle:
         self.c = True
         self.rate = 0
     def struggle(self):
-        """Initiates a struggle! param: time (seonds) return: rate in keys/second"""
-        thread = Thread(target = s._timer)
-        thread2 = Thread(target = s._keycounter)
+        """Initiates a struggle! param: time (seconds) return: rate in keys/second"""
+        thread = Thread(target = self._timer)
+        thread2 = Thread(target = self._keycounter)
 
+        print("Press {} as quickly as possible! for {} seconds!".format(self.char, self.time))
         for i in ["3", "2", "1", "Start!"]:
             sleep(1)
             print(i)
@@ -52,18 +54,12 @@ class struggle:
         thread.start()
         thread2.start()
         thread.join()
-        self.rate = len(s)/10
+        self.rate = len(self.keep())/self.time
+        return self.rate
+
+    def keep(self):
+        return self.char*self.string.count(self.char)
 
 if __name__ == "__main__":
-    s = struggle()
-    thread = Thread(target = s._timer)
-    thread2 = Thread(target = s._keycounter)
-
-    for i in ["3", "2", "1", "Start!"]:
-        sleep(1)
-        print(i)
-
-    thread.start()
-    thread2.start()
-    thread.join()
-    print(s.rate)
+    s=struggle(char="h", time=6)
+    print(str(s.struggle())+"\n")

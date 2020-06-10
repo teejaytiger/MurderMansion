@@ -10,6 +10,17 @@ class MurderMansion:
         self.char = character()
         self.crafter = crafting()
 
+        self.room = room()
+        self.room_history = []
+
+    def next_room(self):
+        self.room_history.append(self.room)
+        self.room = room()
+        return self.room
+
+    self.struggle(self):
+        
+
 class specials:
     def __init__(self):
         pass
@@ -92,6 +103,7 @@ if __name__ == "__main__":
         #let's try again, but with the wrong ingredients
 
     def test3():
+        # Same things as test2, but better and closer to a use casew
         m = MurderMansion()
         # Use the crafting classes in this test
         c = crafting()
