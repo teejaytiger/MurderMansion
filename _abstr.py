@@ -345,10 +345,12 @@ class ACTION(Enum):
     INCREASESTR = 22
     INCREASELCK = 23
     INCREASEPCT = 24
+    INCREASEUNK = 25
     # Specific Character Actions
     SANTAEFFECT = 100 #
     DILDOEFFECT = 101
     MARCUSEFFECT = 102 
+    CUSTOMEFFECT = 103
     # Specific functions for jokes
     GIVESASH = 200
     HONEYPOT = 201

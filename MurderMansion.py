@@ -4,22 +4,20 @@ from _room import DOOR, room
 from _character import character
 from _crafting import crafting
 import random
+from _struggle import struggle
 
 class MurderMansion:
     def __init__(self):
         self.char = character()
         self.crafter = crafting()
-
         self.room = room()
         self.room_history = []
+        self.struggle_base = 6
 
     def next_room(self):
         self.room_history.append(self.room)
         self.room = room()
         return self.room
-
-    def struggle(self):
-        pass
 
 class specials:
     def __init__(self):
@@ -127,8 +125,5 @@ if __name__ == "__main__":
             c.select(new_craft)
             m.char.inventory.put_away(new_craft)
         print(m.char.inventory)
-
-
-        
 
     test3()
