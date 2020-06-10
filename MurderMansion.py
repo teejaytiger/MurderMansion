@@ -18,8 +18,8 @@ class MurderMansion:
         self.room = room()
         return self.room
 
-    self.struggle(self):
-        
+    def struggle(self):
+        pass
 
 class specials:
     def __init__(self):
