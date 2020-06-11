@@ -48,7 +48,8 @@ class room:
 
 
     def furnish(self):
-        """Populates a room with furniture and ingredients"""
+        """Populates a room with furniture and ingredients. Needs to be overhauled."""
+        #TODO: Overhaul this whole thing
         self.containers = {
             room_type.BEDROOM:{c.CHEST:[], c.CLOSET:[], c.DRESSER:[], c.BED:[], c.UNDERBED:[]},
             room_type.SITTINGROOM:{c.CHEST:[], c.CHESTERFIELD:[], c.SHELF:[], c.DISPLAYCASE:[]},

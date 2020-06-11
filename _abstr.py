@@ -345,7 +345,7 @@ class ACTION(Enum):
     INCREASESTR = 22
     INCREASELCK = 23
     INCREASEPCT = 24
-    INCREASEUNK = 25
+    INCREASEATT = 25
     # Specific Character Actions
     SANTAEFFECT = 100 #
     DILDOEFFECT = 101
@@ -360,7 +360,10 @@ class ACTION(Enum):
     STRUGGLE25 = 302
     STRUGGLE75 = 303
     STRUGGLE100 = 304
-
+    EXTENDAMBUSH = 305
+    PLACETRAP = 306
+    LOCKDOOR = 307
+    AMBUSH = 308
 
 class compute:
     """Class defines how items and attributes are randomized in game. Also creates scores and computes affect."""

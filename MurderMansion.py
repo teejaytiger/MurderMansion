@@ -6,7 +6,9 @@ from _crafting import crafting
 import random
 from _struggle import struggle
 
-class MurderMansion:
+
+class mansion:
+    """Implements the physical structures in the game (i.e. Rooms, characters, items)"""
     def __init__(self):
         self.char = character()
         self.crafter = crafting()
@@ -18,10 +20,6 @@ class MurderMansion:
         self.room_history.append(self.room)
         self.room = room()
         return self.room
-
-class specials:
-    def __init__(self):
-        pass
 
 if __name__ == "__main__":
 
@@ -125,5 +123,8 @@ if __name__ == "__main__":
             c.select(new_craft)
             m.char.inventory.put_away(new_craft)
         print(m.char.inventory)
+
+    def test4():
+        pass
 
     test3()
