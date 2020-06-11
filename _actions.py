@@ -163,8 +163,8 @@ if __name__ == "__main__":
     ## print character and doors
     game = action()
     game.crafter.select(ALTAR()) # adds an altar to the default character inventory
-    home_alone = game.do(ACTION.GETFREETRAP, item_name=TRAPS.HOMEALONE)
-    print(game.game.char.inventory)
-    game.do(ACTION.PLACETRAP, home_alone)
-    game.do(ACTION.AMBUSH)
-    print(game.game.char.inventory)
+    home_alone = game.do(ACTION.GETFREETRAP, item_name=TRAPS.HOMEALONE) # gifts a free HOMEALONE trap to the character
+    print(game.game.char.inventory) # prints the inventory to show that it is in the trap section
+    game.do(ACTION.PLACETRAP, home_alone) # places the HOMEALONE trap on all doors
+    game.do(ACTION.AMBUSH) # triggers the ambush (currently just shows door status)
+    print(game.game.char.inventory) # print the inventory to show the trap is gone from the inventory
