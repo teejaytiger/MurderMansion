@@ -520,7 +520,7 @@ class craft_engine:
                 ingredient_name.QUARTZ,
                 ingredient_name.ROSEPETALS]),
             SPELLS.PROTECTION2:( "Stronger Protection Spell",
-            "I can be your hero, baybeh", [2, 0, 0, 0, 0, 0],
+            "I can take away your pain", [2, 0, 0, 0, 0, 0],
                 [ACTION.STRUGGLE50], [
                 ingredient_name.MOONWATER,
                 ingredient_name.ROSEPETALS,
@@ -528,7 +528,7 @@ class craft_engine:
                 ingredient_name.SALT,
                 SPELLS.PROTECTION]),
             SPELLS.PROTECTION3:( "Strongest Protection Spell",
-            "I can be your hero, baybeh", [3, 0, 0, 0, 0, 0],
+            "I will stand by you forever", [3, 0, 0, 0, 0, 0],
                 [ACTION.STRUGGLE100], [
                 ingredient_name.ADDERSTONE,
                 SPELLS.PROTECTION2]),

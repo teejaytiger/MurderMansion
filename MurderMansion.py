@@ -24,7 +24,7 @@ class mansion:
 if __name__ == "__main__":
 
     def test1():
-        m = MurderMansion()
+        m = mansion()
         for i in range(0, 4):
             print(_craft(craft_type=craft_engine().spells))
         print(_craft(craft_type=craft_engine().tools))
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     def test2():
         # create an inventory with an altar and the ingredients needed for a spell
-        m = MurderMansion()
+        m = mansion()
         m.char.inventory.put_away(ALTAR())
         for ingredient in m.crafter.ingredients_by_spell(SPELLS.PROTECTION):
             m.char.inventory.put_away(ingredient)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     def test3():
         # Same things as test2, but better and closer to a use casew
-        m = MurderMansion()
+        m = mansion()
         # Use the crafting classes in this test
         c = crafting()
         # populate inventory with everything you need
