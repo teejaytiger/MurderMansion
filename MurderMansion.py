@@ -125,6 +125,9 @@ if __name__ == "__main__":
         print(m.char.inventory)
 
     def test4():
-        pass
+        m = mansion()
+        print(m.room)
+        m.next_room()
+        print(m.room)
 
-    test3()
+    test4()
