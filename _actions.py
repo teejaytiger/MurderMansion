@@ -13,7 +13,7 @@ from functools import partial
 from _inventory import inventory
 from _character import character
 from _abstr import item_type, ingredient_name, TRAPS, ACTION, craft_engine, SPELLS
-from MurderMansion import mansion
+from _mansion import mansion
 from _room import room, DOOR
 from _item import _craft, ALTAR, LIGHT, BOOK, INGREDIENT
 from _crafting import crafting
@@ -168,3 +168,5 @@ if __name__ == "__main__":
     game.do(ACTION.PLACETRAP, home_alone) # places the HOMEALONE trap on all doors
     game.do(ACTION.AMBUSH) # triggers the ambush (currently just shows door status)
     print(game.game.char.inventory) # print the inventory to show the trap is gone from the inventory
+
+    
