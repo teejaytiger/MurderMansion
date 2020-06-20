@@ -20,19 +20,16 @@ class crafting:
 
     def ingredients_by_name(self, item_type, item_name):
         """Returns a list of constructed ingredients and crafts based on the item_type dict"""
-        parts = [INGREDIENT(ing_name=ing) for ing in item_type[item_name][4] if type(ing)==type(ingredient_name.ADDERSTONE)]
+        #parts = [INGREDIENT(ing_name=ing) for ing in item_type[item_name][4] if type(ing)==type(ingredient_name.ADDERSTONE)]
         parts = [INGREDIENT(ing_name=ing) for ing in item_type[item_name][4]]
-        """
-        for ing in item_type[item_name][4]: 
-            if not type(ing)==type(ingredient_name.ADDERSTONE):
-                parts.append(self.crafts_by_name( ))
-                """
+        if item_type == craft_engine().spells:
+            parts.append(ALTAR())
         return parts
                 
     def select(self, item):
         self.selected.append(item)
 
-    def check_spell_prerequisites(self, item_type, item_name):
+    def check_craft_prerequisites(self, item_type, item_name):
         """
         Function returns True if altar + required inventory items present, otherwise returns False
 
@@ -55,7 +52,7 @@ class crafting:
         """
         # check spell prerequisites and altar existence
         new_craft = None
-        if self.check_spell_prerequisites(item_type, item_name):
+        if self.check_craft_prerequisites(item_type, item_name):
             new_craft = _craft(craft_type=item_type, craft_name=item_name, ingredients_list=self.selected)
         self.selected = []
         return new_craft

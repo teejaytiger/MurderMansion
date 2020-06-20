@@ -86,7 +86,9 @@ class action:
         if not item_name: item_name = random.choice([e for e in choices[item_t] if type(e)!=type("string")])
         for ingredient in self.crafter.ingredients_by_name(choices[item_t], item_name): self.crafter.select(ingredient)
         new_craft = self.crafter.craft(choices[item_t], item_name)
+        print("making free {}".format(item_name))
         if new_craft: 
+            print("selecting items")
             self.crafter.select(new_craft)
             self.game.char.inventory.put_away(new_craft)
         return new_craft
@@ -131,7 +133,7 @@ class action:
         pass
 
     def ambush(self):
-        """Entry point for ambush mechanic"""
+        """Entry point for ambush mechanic""" 
         print("Ambush placeholder")
         for i in self.game.room.doors:
             m = i.murderous
@@ -164,9 +166,11 @@ if __name__ == "__main__":
     ## print character and doors
     game = action()
     game.crafter.select(ALTAR()) # adds an altar to the default character inventory
-    for i in range(0, 5):
-        new_trap = game.do(ACTION.GETFREETRAP) # gifts a free HOMEALONE trap to the character
-    #print(game.game.char.inventory) # prints the inventory to show that it is in the trap section
+    new_trap = game.do(ACTION.GETFREETRAP) # gifts a free HOMEALONE trap to the character
+    new_spell = game.do(ACTION.GETFREESPELL) # gifts a free HOMEALONE trap to the character
+    new_weapon = game.do(ACTION.GETFREEWEAPON) # gifts a free HOMEALONE trap to the character
+    new_tool = game.do(ACTION.GETFREETOOL) # gifts a free HOMEALONE trap to the character
+    print(game.game.char.inventory) # prints the inventory to show that it is in the trap section
     game.do(ACTION.PLACETRAP, new_trap, code="010") # places the HOMEALONE trap on doors
     game.do(ACTION.AMBUSH) # triggers the ambush (currently just shows door status)
-    #print(game.game.char.inventory) # print the inventory to show the trap is gone from the inventory
+    print(game.game.char.inventory) # print the inventory to show the trap is gone from the inventory
