@@ -374,17 +374,17 @@ class compute:
         return random.choice(
             [durability.FRAGILE]*5+\
             [durability.RAMSHACKLE]*10+\
-            [durability.ADEQUATE]*70+\
-            [durability.STURDY]*9+\
-            [durability.CHONKY]*5+\
-            [durability.YOKED]*1)
+            [durability.ADEQUATE]*60+\
+            [durability.STURDY]*12+\
+            [durability.CHONKY]*7+\
+            [durability.YOKED]*2)
     def RANDOMIZE_RARITY(self):
         """Randomizes an item's rarity - can be used to affect the quality of crafts"""
         return random.choice(
-            [rarity.COMMON]*25+\
+            [rarity.COMMON]*24+\
             [rarity.UNUSUAL]*15+\
             [rarity.STRANGE]*5+\
-            [rarity.INCREDIBLE]*2+\
+            [rarity.INCREDIBLE]*3+\
             [rarity.IMMACULATE]*2+\
             [rarity.MYTHOLOGICAL]*1)
     def RANDOMIZE_SIZE_BOOK(self):
@@ -741,18 +741,56 @@ class craft_engine:
         # specials need to be initalized by the game engine as items and mapped to their enums
         self.special = {
             "type":item_type.SPECIAL,
-            SPECIAL.THEGIFTER:("The Gifter","Cindy Lou sends her best...", [0, 0, 0, 0, 0, 0], 
-                [ACTION.SANTAEFFECT], [ingredient_name.SPECIAL] ),
-            SPECIAL.MARCUSMUNITIONS:("Marcus Munitions","What, you don't like money?", [0, 0, 0, 0, 0, 0],
-                [ACTION.MARCUSEFFECT], [ingredient_name.SPECIAL] ),
-            SPECIAL.SUCTIONCUPDILDO: ("Suction Cup Dildo", "Made from 100% medical-grade embarrassment", [0, 0, 0, -1, 0, 0],
-                [ACTION.DILDOEFFECT], [ingredient_name.SPECIAL] ),
+            SPECIAL.THEGIFTER:("The Gifter",
+            "Cindy Lou sends her best...", [0, 0, 0, 0, 0, 0], 
+                [ACTION.SANTAEFFECT], [
+                ingredient_name.SPECIAL] ),
+            SPECIAL.MARCUSMUNITIONS:("Marcus Munitions",
+            "What, you don't like money?", [0, 0, 0, 0, 0, 0],
+                [ACTION.MARCUSEFFECT], [
+                ingredient_name.SPECIAL] ),
+            SPECIAL.SUCTIONCUPDILDO: ("Suction Cup Dildo", 
+            "Made from 100% medical-grade embarrassment", [0, 0, 0, -1, 0, 0],
+                [ACTION.DILDOEFFECT], [
+                ingredient_name.SPECIAL] ),
         }
-        
 
 if __name__ == "__main__":
-    r = []
-    for i in range(0, 100):
-        r += [compute().ALIGNMENT()]
-    print(sum(r))
-    print(sum(r)/len(r))
+    # craft validation
+    c = craft_engine()
+    INGREDIENTS = [e for e in ingredient_name]
+    CRAFTABLE = [e for e in SPELLS]+[e for e in TOOLS]+[e for e in TRAPS]+[e for e in WEAPONS]+[e for e in SPECIAL]
+    DEFINED_CRAFTS = {}
+    DEFINED_INGRED = {}
+    used_ingredients = []
+    model = tuple([type("str")]*2+[type([])]*3)
+    print("\nValidating craft_engine")
+    for i in [c.spells, c.tools, c.traps, c.weapons, c.special]:
+        t = i.pop("type")
+        assert t in item_type # Missing type enum entry
+        for k, v in i.items():
+            print("   {:10s} -> {}...".format(t.name, k.name))
+            # check types
+            assert k in CRAFTABLE # Missing craft enum entry
+            DEFINED_CRAFTS[k]=""
+            for u in range(0, len(model)):
+                assert type(v[u]) == model[u] # Type mismatch between craft prototype and craft implementation
+            assert len(v[2]) == 6 # Incomplete character list
+            for act in v[3]:
+                assert act in ACTION # Missing action enum entry
+            for ing in v[4]:
+                assert ing in CRAFTABLE+INGREDIENTS # Component enum not found (Ingredient or craft)
+                DEFINED_INGRED[ing]=""
+                used_ingredients.append(ing)
+    # now the other way!
+    print("\nensuring craftable enum entries are defined")
+    for i in CRAFTABLE:
+        assert i in DEFINED_CRAFTS # Craft enum is missing definition
+    print("\n#### ALL TESTS PASSED ####")
+    print("\n#### UNUSED INGREDIENTS ####")
+    for i in (set(INGREDIENTS)-set(DEFINED_INGRED)):
+        print(i.name)
+    print("\n#### CRAFT INGREDIENT RARITY ####")
+    for i in set(DEFINED_INGRED):
+        c = used_ingredients.count(i)
+        print("{}:{}".format(i.name, c))

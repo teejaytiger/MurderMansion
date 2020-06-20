@@ -80,9 +80,10 @@ class action:
         choices = {
             item_type.SPELL:craft_engine().spells,
             item_type.TRAP:craft_engine().traps,
-            item_type.TOOL:craft_engine().tools
+            item_type.TOOL:craft_engine().tools,
+            item_type.WEAPON:craft_engine().weapons,
         }
-        if not item_name: item_name = random.choice([e for e in choices[item_t]])
+        if not item_name: item_name = random.choice([e for e in choices[item_t] if type(e)!=type("string")])
         for ingredient in self.crafter.ingredients_by_name(choices[item_t], item_name): self.crafter.select(ingredient)
         new_craft = self.crafter.craft(choices[item_t], item_name)
         if new_craft: 
@@ -107,7 +108,7 @@ class action:
         pass
 
     def neutralize_door(self, code : Text):
-        """Uses one-hot encoding to neutralize a specific door (i.e. "010" would make door two, and only door two, safe)"""
+        """Uses one-hot encoding string to neutralize a specific door (i.e. "010" would make door two, and only door two, safe)"""
         try:
             assert code.count("0")==2 and len(code) == 3 # ensure one hot encoding by counting 0s
             for i in range(0, 3):
@@ -117,9 +118,8 @@ class action:
     
     def place_trap(self, trap : _craft, code : Text = "000"):
         """Uses encoding to place trap in a room. Currently, traps default to all doors and trigger on ambush."""
-        print ("placing {} ".format(trap.name))
         for i in range(0, 3):
-            self.game.room.doors[i].trap = trap
+            self.game.room.doors[i].trap = trap if int(code[i]) else None
         self.game.char.inventory.throw_away(trap)
 
     def impact_next_struggle(self, factor: float=1):
@@ -134,8 +134,9 @@ class action:
         """Entry point for ambush mechanic"""
         print("Ambush placeholder")
         for i in self.game.room.doors:
-            print(i.murderous)
-            print(i.trap)
+            m = i.murderous
+            s = i.trap.name if i.trap else False
+            print("door {} -> murderous: {} | trapped: {}".format(i, m, s))
 
     def read(self, book):
         pass
@@ -157,16 +158,15 @@ class action:
 
 if __name__ == "__main__":
     ## make a game
-    ## increase character stats
+    ## increase character stats 
     ## make a room
     ## lock a door
     ## print character and doors
     game = action()
     game.crafter.select(ALTAR()) # adds an altar to the default character inventory
-    home_alone = game.do(ACTION.GETFREETRAP, item_name=TRAPS.HOMEALONE) # gifts a free HOMEALONE trap to the character
-    print(game.game.char.inventory) # prints the inventory to show that it is in the trap section
-    game.do(ACTION.PLACETRAP, home_alone) # places the HOMEALONE trap on all doors
+    for i in range(0, 5):
+        new_trap = game.do(ACTION.GETFREETRAP) # gifts a free HOMEALONE trap to the character
+    #print(game.game.char.inventory) # prints the inventory to show that it is in the trap section
+    game.do(ACTION.PLACETRAP, new_trap, code="010") # places the HOMEALONE trap on doors
     game.do(ACTION.AMBUSH) # triggers the ambush (currently just shows door status)
     print(game.game.char.inventory) # print the inventory to show the trap is gone from the inventory
-
-    

@@ -224,7 +224,7 @@ class INGREDIENT(_item):
     """
     Used in spellcasting and weapon crafting
     """
-    def __init__(self, ing_name=compute().RANDOMIZE_INGREDIENT_NAME()):
+    def __init__(self, ing_name=None):
         self.craft_type = item_type.INGREDIENT
         self.modifiers = {}
         self.size = compute().RANDOMIZE_SIZE_INGREDIENT()
@@ -233,7 +233,7 @@ class INGREDIENT(_item):
         self.timestamp = datetime.datetime.now(pytz.utc).isoformat()
         self.alignment = compute().ALIGNMENT()
         self.score = super().get_uses()
-        self.name = ing_name
+        self.name = ing_name if ing_name else compute().RANDOMIZE_INGREDIENT_NAME()
         self.icon = ch.CRAFT_ICON
         self.badge = ""
         self.countdown = 1
@@ -244,20 +244,35 @@ if __name__ == "__main__":
     lights = []
     altars = []
     ingredients = []
-    for i in range(0, 1):
-        books.append(BOOK())
-        lights.append(LIGHT())
-        altars.append(ALTAR())
-    for i in range(0, 30):
-        ingredients.append(INGREDIENT())
-    
-    for b in books:
-        print(b)
-    for b in lights:
-        print(b)
-    for b in altars:
-        print(b)
-    for b in ingredients:
-        print(b)
+    rardict = {
+        rarity.COMMON:0,
+        rarity.UNUSUAL:0,
+        rarity.STRANGE:0,
+        rarity.INCREDIBLE:0,
+        rarity.IMMACULATE:0,
+        rarity.MYTHOLOGICAL:0}
+    durdict = {
+        durability.FRAGILE:0,
+        durability.RAMSHACKLE:0,
+        durability.ADEQUATE:0,
+        durability.STURDY:0,
+        durability.CHONKY:0,
+        durability.YOKED:0}
+    count = 0
+    maxnum = 1000
+    for i in range(0, maxnum):
+        x = INGREDIENT()
+        rardict[x.rarity]+=1
+        durdict[x.durability]+=1
+        ingredients.append(x)
+    print("\n######## RARITY DISTRIBUTION TEST ########")
+    for i, j in rardict.items():
+        print("{:15s} : {:.2%}".format(i.name, j/maxnum))
+    print("\n######## DURABILITY DISTRIBUTION TEST ########")
+    for i, j in durdict.items():
+        print("{:15s} : {:.2%}".format(i.name, j/maxnum))
+
+    for i in range(0, 5):
+        print(ingredients[i])
 
     # randomize a weapon from craft_engine

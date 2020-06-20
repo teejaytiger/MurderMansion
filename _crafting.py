@@ -19,9 +19,16 @@ class crafting:
         return [INGREDIENT(ing_name=ing) for ing in craft_engine().spells[spell][4] if type(ing)==type(ingredient_name.ADDERSTONE)]
 
     def ingredients_by_name(self, item_type, item_name):
-        """Returns a list of constructed ingredients based on the item_type dict"""
-        return [INGREDIENT(ing_name=ing) for ing in item_type[item_name][4] if type(ing)==type(ingredient_name.ADDERSTONE)]
-
+        """Returns a list of constructed ingredients and crafts based on the item_type dict"""
+        parts = [INGREDIENT(ing_name=ing) for ing in item_type[item_name][4] if type(ing)==type(ingredient_name.ADDERSTONE)]
+        parts = [INGREDIENT(ing_name=ing) for ing in item_type[item_name][4]]
+        """
+        for ing in item_type[item_name][4]: 
+            if not type(ing)==type(ingredient_name.ADDERSTONE):
+                parts.append(self.crafts_by_name( ))
+                """
+        return parts
+                
     def select(self, item):
         self.selected.append(item)
 

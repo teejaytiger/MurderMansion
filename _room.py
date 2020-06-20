@@ -43,7 +43,7 @@ class room:
         for container, items in self.containers.items():
             s+="container: {0}\n".format(container.name)
             for item in items:
-                s+=item.__str__()+"\n"
+                s+=[line for line in item.__str__().split("\n")][1][1:-1]+"\n"
         return s
 
 
@@ -90,3 +90,9 @@ if __name__ == "__main__":
     print("Time to encounter: {}".format(r.time_to_encounter))
     for door in r.doors:
         print("Murderous door?: {}".format(door.murderous))
+
+    print(room())
+    print(room())
+    for i, j in room().containers.items():
+        for k in j:
+            print("{} {}".format(k.rarity, k.name.name))
