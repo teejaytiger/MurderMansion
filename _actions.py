@@ -13,7 +13,7 @@ from functools import partial
 from _inventory import inventory
 from _character import character
 from _abstr import item_type, ingredient_name, TRAPS, ACTION, craft_engine, SPELLS
-from MurderMansion import mansion
+from _mansion import mansion
 from _room import room, DOOR
 from _item import _craft, ALTAR, LIGHT, BOOK, INGREDIENT
 from _crafting import crafting
