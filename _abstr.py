@@ -41,6 +41,22 @@ class color:
     END = '\033[0m'
     # print(color.BOLD + 'Hello World !' + color.END)
 
+class term:
+    SAVECURSOR = '\033[s'
+    CURSORHOME = '\033[H'
+    RESTORECURSOR = '\033[u'
+    CURSORUP = '\033[a'
+    CURSORDOWN = '\033[b'
+    CURSORRIGHT = '\033[c'
+    CURSORLEFT = '\033[d'
+    ERASELINE = '\033[1M' # or 2K, unsure
+    ERASESOL = '\033[1K'
+    ERASEEOL = '\033[K'
+    CLS = '\033[2J'
+    ERASEUP = '\033[1J'
+    ERASEDOWN = '\033[J'
+    ESCAPE = b'\x1b'
+
 class item_type(Enum):
     BOOK = 0
     WEAPON = 1
@@ -70,6 +86,12 @@ class chars:
     DOUBLE_T_LEFT = u'\u2560' # ╠
     DOUBLE_T_TOP = u'\u2566' # ╦
     DOUBLE_T_BOTTOM = u'\u2569' # ╩
+    #TRIANGLELEFT = u'\u25c1' # ◁
+    #TRIANGLERIGHT = u'\u25b7' # ▷
+    TRIANGLELEFT = "<" # ◁
+    TRIANGLERIGHT = ">" # ▷
+    TRIANGLEUP = u'\u25b3' # △
+    TRIANGLEDOWN = u'\u25bd' # ▽
     BOOK_ICON = chr(10026)
     ALTAR_ICON = chr(9912)
     LIGHT_ICON = chr(9775)

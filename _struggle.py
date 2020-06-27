@@ -36,7 +36,7 @@ class struggle:
         return
     def _keycounter(self):
         while self.c:
-            self.string += self.getch()
+            self.string += str(self.getch())
         return
     def _reset(self):
         self.c = True

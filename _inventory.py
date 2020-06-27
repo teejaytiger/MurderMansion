@@ -11,6 +11,7 @@ class inventory:
         self.traps = traps()
         self.tools = tools()
         self.ingredients = ingredients()
+        self.specials = specials()
 
         self.max_weight = 30
         self.current_weight = 0
@@ -23,7 +24,8 @@ class inventory:
             item_type.SPELL:self.spells,
             item_type.TRAP:self.traps,
             item_type.TOOL:self.tools,
-            item_type.INGREDIENT:self.ingredients}
+            item_type.INGREDIENT:self.ingredients,
+            item_type.SPECIAL:self.specials}
 
     def put_away(self, item):
         if self.max_weight < item.size.value+self.current_weight:
@@ -54,6 +56,7 @@ class inventory:
         s+= "\n"+self.traps.__str__()
         s+= "\n"+self.tools.__str__()
         s+= "\n"+self.ingredients.__str__()
+        s+= "\n"+self.specials.__str__()
         return s
 
 class books:
@@ -77,6 +80,9 @@ class tools:
 class ingredients:
     def __init__(self): self.items = []
     def __str__(self): return "ingredients:\n"+"\n".join([e.__str__() for e in self.items])
+class specials:
+    def __init__(self): self.items = []
+    def __str__(self): return "specials:\n"+"\n".join([e.__str__() for e in self.items])
 
 if __name__ == "__main__":
     inv = inventory()

@@ -12,7 +12,7 @@ import random
 from functools import partial
 from _inventory import inventory
 from _character import character
-from _abstr import item_type, ingredient_name, TRAPS, ACTION, craft_engine, SPELLS
+from _abstr import item_type, ingredient_name, TRAPS, ACTION, craft_engine, SPELLS, color
 from _mansion import mansion
 from _room import room, DOOR
 from _item import _craft, ALTAR, LIGHT, BOOK, INGREDIENT
@@ -61,6 +61,7 @@ class action:
             ACTION.PLACETRAP : partial(self.place_trap, code="000"),
             ACTION.LOCKDOOR : partial(self.neutralize_door),
             ACTION.AMBUSH : self.ambush, 
+            # 
         }
 
     def do(self, action : ACTION, *args, **kwargs):
@@ -158,6 +159,63 @@ class action:
     def craft(self):
         pass
 
+    def title(self):
+        print("\n\n\n")
+        print(color.RED+\
+              "  ███▄ ▄███▓ █    ██  ██▀███  ▓█████▄ ▓█████  ██▀███      ███▄ ▄███▓ ▄▄▄       ███▄    █   ██████  ██▓ ▒█████   ███▄    █ \n"+\
+              "  ▓██▒▀█▀ ██▒ ██  ▓██▒▓██ ▒ ██▒▒██▀ ██▌▓█   ▀ ▓██ ▒ ██▒   ▓██▒▀█▀ ██▒▒████▄     ██ ▀█   █ ▒██    ▒ ▓██▒▒██▒  ██▒ ██ ▀█   █ \n"+\
+              "  ▓██    ▓██░▓██  ▒██░▓██ ░▄█ ▒░██   █▌▒███   ▓██ ░▄█ ▒   ▓██    ▓██░▒██  ▀█▄  ▓██  ▀█ ██▒░ ▓██▄   ▒██▒▒██░  ██▒▓██  ▀█ ██▒\n"+\
+              "  ▒██    ▒██ ▓▓█  ░██░▒██▀▀█▄  ░▓█▄   ▌▒▓█  ▄ ▒██▀▀█▄     ▒██    ▒██ ░██▄▄▄▄██ ▓██▒  ▐▌██▒  ▒   ██▒░██░▒██   ██░▓██▒  ▐▌██▒\n"+\
+              "  ▒██▒   ░██▒▒▒█████▓ ░██▓ ▒██▒░▒████▓ ░▒████▒░██▓ ▒██▒   ▒██▒   ░██▒ ▓█   ▓██▒▒██░   ▓██░▒██████▒▒░██░░ ████▓▒░▒██░   ▓██░\n"+\
+              "  ░ ▒░   ░  ░░▒▓▒ ▒ ▒ ░ ▒▓ ░▒▓░ ▒▒▓  ▒ ░░ ▒░ ░░ ▒▓ ░▒▓░   ░ ▒░   ░  ░ ▒▒   ▓▒█░░ ▒░   ▒ ▒ ▒ ▒▓▒ ▒ ░░▓  ░ ▒░▒░▒░ ░ ▒░   ▒ ▒ \n"+\
+              "  ░  ░      ░░░▒░ ░ ░   ░▒ ░ ▒░ ░ ▒  ▒  ░ ░  ░  ░▒ ░ ▒░   ░  ░      ░  ▒   ▒▒ ░░ ░░   ░ ▒░░ ░▒  ░ ░ ▒ ░  ░ ▒ ▒░ ░ ░░   ░ ▒░\n"+\
+              "  ░      ░    ░░░ ░ ░   ░░   ░  ░ ░  ░    ░     ░░   ░    ░      ░     ░   ▒      ░   ░ ░ ░  ░  ░   ▒ ░░ ░ ░ ▒     ░   ░ ░ \n"+\
+              "         ░      ░        ░        ░       ░  ░   ░               ░         ░  ░         ░       ░   ░      ░ ░           ░ \n"+\
+              "                                ░                                                                                          \n")
+        s = random.choice([
+            ("We’ve all got the power in our hands to kill, but most people are afraid to use it. The ones who aren’t afraid, control life itself.", "-Richard Ramirez"),
+            ("We serial killers are your sons, we are your husbands, we are everywhere. And there will be more of your children dead tomorrow.", "-Ted Bundy"),
+            ("I just wanted to see how it felt to shoot Grandma.", "-Edmund Kemper"),
+            ("A clown can get away with murder.", "-John Wayne Gacy"),
+            ("I’m the most cold-hearted son-of-a-bitch you’ll ever meet.", "-Ted Bundy"),
+            ("What’s one less person on the face of the earth, anyway?", "-Ted Bundy"),
+            ("I’ve got to start eating at home more.", "-Jeffrey Dahmer"),
+            ("The only thing they can get me for is running a funeral parlor without a license.", "-John Wayne Gacy"),
+            ("I actually think I may be possessed with demons; I was dropped on my head as a kid.", "-Dennis Rader"),
+            ("Even psychopaths have emotions; then again, maybe not.", "-Richard Ramirez"),
+            ("I wanted to clear all the lies and let the truth come out. I have hate crawling through my system.", "-Aileen Wuornos"),
+            ("I like children, they are tasty.", "-Albert Fish"),
+            ("If you’re going to do something, do it well. And leave something witchy.", "-Charles Manson"),
+            ("I believe the only way to reform people is to kill them.", "-Carl Panzram"),
+            ("That is my ambition, to have killed more people- more helpless people- than any man or woman who has ever lived.", "-Jane Toppan"),
+            ("To me, this world is nothing but evil, and my own evil just happened to come out 'cause of the circumstances of what I was doing.", "-Aileen Wuornos"),
+            ("Hurry it up, you Hoosier bastard! I could kill a dozen men while you're screwing around!", "-Carl Panzram"),
+            ("We do whatever we enjoy doing. Whether it happens to be judged good or evil is a matter for others to decide.", "-Ian Bady"),
+            ("It wasn’t as dark and scary as it sounds. I had a lot of fun… killing somebody’s a funny experience.", "Albert DeSalvo")
+        ])
+        wid = len(s[0])-10
+        print("{}\n{}{}\n\n\n".format(s[0], " "*wid, s[1]))
+        print(  "A GAME BUILT BY YOUR LOVED ONES\n\n"+color.END+\
+                color.RED+"DEVELOPER:"+color.END+" \nJames McKay\n\n"+\
+                color.RED+"TECHNICAL CONSULTANTS:"+color.END+"\n"+\
+                "Greg Hoople\nJared Enos\n\n"+\
+                color.RED+"CREATIVE CONSULTANTS:"+color.END+"\n"+\
+                "Elisabeth Enos\nHannah Gonzalez\n"+\
+                "Haley Harrison\nEllen Lindsay\nIcy Boi\n"+\
+                "Gabbz\nGabby Zermeno\nAlex Zermeno\n"+\
+                "Lucy Carroll\nTom Carroll\n"+\
+                "Chloe\nMegan Lee"
+            )
+
+    def intro(self):
+        return [
+            " ",0,
+            "You wake up in a strange place...", 3,
+            "Your head feels fuzzy and your eyes can't see too well...", 1,
+            "How did you get here?", 1, "You have a strange feeling.", 1, "Like there's someone else here.", 1, "Someone BAD.", 1,
+            "You climb to your feet and try to take in the splendor of this place...", 3, "You're in some sort of intricate room. ", 0, 
+            "Everything in here looks really expensive. This must be some kind of mansion...", 2]
+
 if __name__ == "__main__":
     ## make a game
     ## increase character stats 
@@ -165,11 +223,12 @@ if __name__ == "__main__":
     ## lock a door
     ## print character and doors
     game = action()
+    game.title()
     game.crafter.select(ALTAR()) # adds an altar to the default character inventory
-    new_trap = game.do(ACTION.GETFREETRAP) # gifts a free HOMEALONE trap to the character
-    new_spell = game.do(ACTION.GETFREESPELL) # gifts a free HOMEALONE trap to the character
-    new_weapon = game.do(ACTION.GETFREEWEAPON) # gifts a free HOMEALONE trap to the character
-    new_tool = game.do(ACTION.GETFREETOOL) # gifts a free HOMEALONE trap to the character
+    new_trap = game.do(ACTION.GETFREETRAP) 
+    new_spell = game.do(ACTION.GETFREESPELL)
+    new_weapon = game.do(ACTION.GETFREEWEAPON) 
+    new_tool = game.do(ACTION.GETFREETOOL) 
     print(game.game.char.inventory) # prints the inventory to show that it is in the trap section
     game.do(ACTION.PLACETRAP, new_trap, code="010") # places the HOMEALONE trap on doors
     game.do(ACTION.AMBUSH) # triggers the ambush (currently just shows door status)
