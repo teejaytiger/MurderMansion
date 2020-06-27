@@ -142,6 +142,18 @@ class _craft(_abstr):
         s+="                       ╚═══"+"═"*wid+"╝"
         return s
 
+    def __repr__(self):
+        iconmap = {
+            item_type.WEAPON:ch.WEAPON_ICON,
+            item_type.INGREDIENT:ch.CRAFT_ICON,
+            item_type.SPELL:ch.SPELL_ICON,
+            item_type.TOOL:ch.TOOL_ICON,
+            item_type.TRAP:ch.TRAP_ICON,
+            item_type.UNSET:ch.UNSET_ICON,
+            item_type.SPECIAL:ch.FULL_STAR}
+        s = ""
+
+
     def compute_alignment(self):
         total = 0.0
         for ingredient in self.ingredients:
