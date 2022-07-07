@@ -1,6 +1,6 @@
 # Murder Mansion
 
-Murder mansion is a text-based RPG I'm developing with a 1 month deadline for my wife's birthday. It has elements of magic, horror, and fear. 
+Murder mansion is a text-based RPG I'm developing for my wife. It has elements of magic, horror, and fear. 
 
 ## I need your help!
 Anyone who helps me come up with ideas for characters Alice can encounter, new ideas for spells, and craftable items she can use will end up in the credits! It'll be well worth it for her to experience your influence in this game!
